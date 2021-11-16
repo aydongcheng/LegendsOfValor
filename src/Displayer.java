@@ -6,11 +6,11 @@ public class Displayer {
     public Displayer(){}
 
     //diaplay the data in form layout
-    public static void formDisplay(ArrayList<ArrayList<StringBuilder>> items, int lineLength, int itemLength){
+    public static String formDisplay(ArrayList<ArrayList<StringBuilder>> items, int lineLength, int itemLength){
         StringBuilder stringBuilder = new StringBuilder();
         //divide the items to several rows
         for(int row = 0; row < Math.ceil((double) items.size()/lineLength); row++) {
-            stringBuilder.append("\n");
+//            stringBuilder.append("\n");
             int line = 0;
             boolean label = true;
             int lineSize = lineLength;
@@ -18,12 +18,15 @@ public class Displayer {
                 lineSize = items.size()%lineLength == 0? lineLength:items.size()%lineLength;
             while (label){
                 label = false;
-                for(int i = 0; i< lineSize; i++){
-                    if(line < items.get(row*lineLength + i).size()) {
-                        StringBuilder item = items.get(row * lineLength + i).get(line);
-                        stringBuilder.append(items.get(row * lineLength + i).get(line));
-                        stringBuilder.append(" ".repeat(Math.max(0, itemLength - item.length())));
-                        label = true;
+                for(int i = 0; i< lineLength; i++){
+                    if(lineSize > i) {
+                        if (line < items.get(row * lineLength + i).size()) {
+                            StringBuilder item = items.get(row * lineLength + i).get(line);
+                            stringBuilder.append(items.get(row * lineLength + i).get(line));
+                            stringBuilder.append(" ".repeat(Math.max(0, itemLength - item.length())));
+                            label = true;
+                        } else
+                            stringBuilder.append(" ".repeat(itemLength));
                     }
                     else
                         stringBuilder.append(" ".repeat(itemLength));
@@ -32,7 +35,7 @@ public class Displayer {
                 line++;
             }
         }
-        System.out.print(stringBuilder);
+        return stringBuilder.toString();
     }
 
     //display the list with index

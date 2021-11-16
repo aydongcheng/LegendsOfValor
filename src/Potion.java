@@ -9,6 +9,7 @@ public class Potion extends Merchandise implements Consumable{
         super(name, minLevel, price, "Potion");
         setAttributeIncrease(attributeIncrease);
         setAttributes(attributes);
+        equipBehavior = new EquipNo();
     }
 
     //get the lines to display the potion info

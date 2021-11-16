@@ -224,9 +224,6 @@ public class Hero extends Characters{
         return attributes;
     }
 
-    public void display(){
-        Displayer.displayLines(getDisplayLines());
-    }
 
     public int getMana() {
         return mana;
@@ -281,15 +278,21 @@ public class Hero extends Characters{
     }
 
     public void setWeapon(Weapon weapon) {
+        this.weapon.unequip();
         this.weapon = weapon;
+        this.weapon.equip();
     }
 
     public void setArmor(Armor armor) {
+        this.armor.unequip();
         this.armor = armor;
+        this.armor.equip();
     }
 
     public void setSpell(Spell spell) {
+        this.spell.unequip();
         this.spell = spell;
+        this.spell.equip();
     }
 
     public Weapon getWeapon() {
