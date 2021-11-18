@@ -4,9 +4,7 @@ import java.util.Random;
 //the entity of monster
 public class Monster extends Characters{
     public Monster(){}
-    
-    //temporary location integer
-    
+
     //create monster with attributes
     public Monster(String name, int initLevel, int damage, int defense, int dodgeChance){
         super(name);
@@ -16,8 +14,6 @@ public class Monster extends Characters{
         setDefense(defense);
         setDodgeChance(dodgeChance);
         setHp(initLevel*100);
-        
-        //TODO location for monsters
     }
 
     //create monster with attributes in string list form
