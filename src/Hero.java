@@ -224,6 +224,9 @@ public class Hero extends Characters{
         return attributes;
     }
 
+    public void display(){
+        Displayer.displayLines(getDisplayLines());
+    }
 
     public int getMana() {
         return mana;

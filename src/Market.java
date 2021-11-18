@@ -1,8 +1,9 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 //the entity of market
-public class Market {
+public class Market{
     public Market(){
         FileReader fileReader = new FileReader();
         //create weapons
@@ -50,52 +51,53 @@ public class Market {
 
     //display items in market
 
-    public void displayPotions(int index){
-        Displayer.listDisplay(potions,"Potions",index);
+    public String displayPotions(int index){
+        return Displayer.listDisplay(potions,"Potions",index);
     }
 
-    public void displayArmors(int index){
-        Displayer.listDisplay(armors,"Armors",index);
+    public String displayArmors(int index){
+        return Displayer.listDisplay(armors,"Armors",index);
     }
 
-    public void displaySpells(int index){
-        Displayer.listDisplay(spells,"Spells",index);
+    public String displaySpells(int index){
+        return Displayer.listDisplay(spells,"Spells",index);
     }
 
-    public void displayWeapons(int index){
-        Displayer.listDisplay(weapons,"Weapons",index);
+    public String displayWeapons(int index){
+        return Displayer.listDisplay(weapons,"Weapons",index);
     }
 
-    public int display(){
+    public String getDisplayLines(){
+        StringBuilder infos = new StringBuilder();
         int index = 0;
-        displayWeapons(index);
+        infos.append(displayWeapons(index));
         index += weapons.size();
-        displayArmors(index);
+        infos.append(displayArmors(index));
         index += armors.size();
-        displaySpells(index);
+        infos.append(displaySpells(index));
         index += spells.size();
-        displayPotions(index);
-        return index+ potions.size();
+        infos.append(displayPotions(index));
+        return infos.toString();
     }
 
-    public Merchandise displayItems(int index){
+    public int getTotalItemsNum(){
+        return weapons.size()+armors.size()+spells.size()+potions.size();
+    }
+
+    public Merchandise getItem(int index){
         if(index < weapons.size()){
-            weapons.get(index).display();
             return weapons.get(index);
         }
         index-= weapons.size();
         if(index < + armors.size()){
-            armors.get(index).display();
             return armors.get(index);
         }
         index-= armors.size();
         if(index < spells.size()){
-            spells.get(index).display();
             return spells.get(index);
         }
         else {
             index-= spells.size();
-            potions.get(index).display();
             return potions.get(index);
         }
     }

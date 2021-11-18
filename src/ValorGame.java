@@ -6,7 +6,7 @@ public class ValorGame extends RPGGame{
     private LVBoard mahBoard;
     //private Team team;
     private Scanner scan;
-    
+
     private int roundCounter=0;
 	private MonsterTeam mTeam;
 	private HeroTeam hTeam;
@@ -26,17 +26,17 @@ public class ValorGame extends RPGGame{
     	//pick hero phase, choose 3
         System.out.println("\nFirst of all, let's build a team of 3 heroes:");
         hTeam.chooseHero();
-        
+
         //TODO method: print team info
         System.out.print("You built a Team of ");
 
         hTeam.displayHerosName();
         mTeam.displayMonstersName();
-        
+
         printInstruction();
 		//print map,
-		
-		//start 
+
+		//start
 		//round start
 			//turn start, iterate the arrayList of heroes
 			//hero 1 move
@@ -45,21 +45,21 @@ public class ValorGame extends RPGGame{
 			//hero 3
 			//monsters' turns
 			//iterate for each monsters to forward/attack
-    		
+
 			//next round, round timer for add new monsters
     		//print hero team status, monster team status
-    	
-        
+
+
         while (roundCounter<6) {
             //display the map
         	roundCounter++;
         	System.out.printf("This is round %d, Hero Action Phase:\n", roundCounter);
             for(Hero h : hTeam.getHeroes()) {
-	            mahBoard.display(h.getRow(), h.getColumn());
+//	            mahBoard.display(h.getRow(), h.getColumn());
 	            chooseAction(h);
-	        	
-            
-	            
+
+
+
 	            /* previous engagement check
 	            if(action.equals("move")){
 	                //move to a market cell
@@ -82,7 +82,7 @@ public class ValorGame extends RPGGame{
 	                }
 	            }
 	            */
-	            
+
             }
             System.out.println("Hero Phase end. Monster Action Phase:");
             for(Monster m : mTeam.getMonsters()) {
@@ -98,7 +98,7 @@ public class ValorGame extends RPGGame{
 
             Displayer.listDisplay(hTeam.getHeroes(),"Heroes",0);
         }
-        
+
     }
 
 
@@ -173,28 +173,30 @@ public class ValorGame extends RPGGame{
             for(Hero hero:hTeam.getHeroes())
                 stringBuilder.add(hero.getDisplayLines());
             Displayer.formDisplay(stringBuilder,3,30);
-            h.checkInfo();
+//            h.checkInfo();
             chooseAction(h);
         	break;
         //buy
         case 3:
         	//TODO new market
-        	Market market = ((MarketCell)mahBoard.getCells()[h.getRow()][h.getColumn()]).getMarket();
-            //trade
-            trade(market);
+            if(mahBoard.getCells()[h.getRow()][h.getColumn()] instanceof NexusCell) {
+                //trade
+                trade(h);
+            }
+            else System.out.println("You are not in nexus, you cannot buy anything!");
         	break;
         //print map
         case 4:
-            mahBoard.display(h.getRow(), h.getColumn());
+//            mahBoard.display(h.getRow(), h.getColumn());
             chooseAction(h);
         	break;
         //Attack
         case 5:
-        	
+
         	break;
         //Cast spell
         case 6:
-        	
+
         	break;
         //Teleport
         case 7:
@@ -230,7 +232,7 @@ public class ValorGame extends RPGGame{
             System.out.println("Quit game.");
             System.exit(0);
         	break;
-    	
+
         }
     	System.out.printf("%s' turn end.\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n", h.getName());
     }
@@ -242,8 +244,8 @@ public class ValorGame extends RPGGame{
         	//check monster position
         	//if()
             return true;
-        
-        else 
+
+        else
         	return false;
         //TODO check monster
     }
@@ -295,56 +297,70 @@ public class ValorGame extends RPGGame{
         }
     }*/
 
-    private void trade(Market market){
+    private void trade(Hero hero){
     	//TODO new market class design
-        int totalNum = market.display();
-        while (true) {
-            int index = Displayer.chooseList(totalNum);
-            Merchandise merchandise = market.displayItems(index);
-            System.out.println("Do you want to buy this merchandise for this hero?(y/others)");
-            String input = scan.next();
-            if(input.equals("y")){
-                System.out.println("Which hero wants to buy equipments?");
-                hTeam.displayHerosName();
-                int indeOfHero = Displayer.chooseList(hTeam.getHeroes().size());
-                Hero hero = hTeam.getHeroes().get(indeOfHero);
-                if(!hero.buyMerchandise(merchandise))
-                    System.out.println("Sorry hero " + hero.getName()+" does not meet the purchase conditions");
-                else
-                    System.out.println("Hero " + hero.getName() + " got " + merchandise.getName());
+        Market market = new Market();
+        boolean keepBuy = true;
+        while (keepBuy) {
+            //display
+            InfoWindow marketAndSellWindow = new InfoWindow();
+            ListWindow marketInfoWindow = new ListWindow(market.getClass().toString().split(" ")[1]);
+            marketInfoWindow.setPosition(1,1);
+            marketInfoWindow.addSubWidget(new BlankWidget(85,1+3,1, market.getDisplayLines()));
 
-            System.out.println("Do you want to check other merchandises in the market?(y/n)");
-            char in = Tools.charScanner("yn");
-            if(in == 'y') 
-            	continue;
-            else
-            	break;
-        }
-        while (true) {
-            System.out.println("Which hero wants to sell his/her equipment?");
-            hTeam.displayHerosName();
-            int indeOfHero = Displayer.chooseList(hTeam.getHeroes().size());
-            Hero hero = hTeam.getHeroes().get(indeOfHero);
-            int NumEquipInInventory = hero.getInventory().display();
-            int indexOfEquipment = Displayer.chooseList(NumEquipInInventory);
-            Merchandise merchandise = hero.getInventory().displayItems(indexOfEquipment);
-            System.out.println("Do you want to sell this merchandise?(y/others)");
-            input = scan.next();
-            if(input.equals("y")){
-                hero.sellMerchandise(merchandise);
+            marketAndSellWindow.addSubWidget(marketInfoWindow);
+
+            ListWindow inventoryInfoWindow = new ListWindow(hero.getInventory().getClass().toString().split(" ")[1]);
+            inventoryInfoWindow.setPosition(19,1);
+            inventoryInfoWindow.addSubWidget(new BlankWidget(85,1+3,1,
+                    hero.getInventory().getDisplayLines()));
+
+            marketAndSellWindow.addSubWidget(inventoryInfoWindow);
+
+            System.out.println(marketAndSellWindow);
+            int totalNum = market.getTotalItemsNum();
+
+            char input = Tools.charScanner("bce");
+            switch (input){
+                case 'b':
+                    int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
+                    Merchandise merchandise = market.getItem(index);
+                    marketAndSellWindow.newMessage(merchandise.getDisplayLines().toString());
+                    System.out.println("Are you sure to buy this merchandise?(y/others)");
+                    String check= scan.next();
+                    if(check.equals("y")) {
+                        if (!hero.buyMerchandise(merchandise))
+                            marketAndSellWindow.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
+                        else
+                            marketAndSellWindow.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
+                    }
+                    break;
+                case 's':
+                    int NumEquipInInventory = hero.getInventory().getTotalItemsNum();
+                    if(NumEquipInInventory == 0) {
+                        marketAndSellWindow.newMessage("Sorry, you don't have any merchandise.");
+                        break;
+                    }
+                    int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to sell:",0,
+                            NumEquipInInventory-1);
+                    merchandise = hero.getInventory().getItem(indexOfEquipment);
+                    marketAndSellWindow.newMessage(merchandise.getDisplayLines().toString());
+                    System.out.println("Are you sure to sell this merchandise?(y/others)");
+                    check = scan.next();
+                    if(check.equals("y")) {
+                        hero.sellMerchandise(merchandise);
+                        System.out.println("Hero " + hero.getName() + " sold " + merchandise.getName());
+                    }
+                    break;
+                case 'e':
+                    keepBuy = false;
+                    break;
             }
-            System.out.println("Do you want to check other merchandises in the market?(y/n)");
-            char in = Tools.charScanner("yn");
-            if(in == 'y') 
-            	continue;
-            else
-            	break;
-        	}
         }
     }
 
     //change equipment and use potions when not fighting
-    /*TODO each type for an array list. In case of spells nested arrayList but print "spell:"? 
+    /*TODO each type for an array list. In case of spells nested arrayList but print "spell:"?
     private void equipHero(){
         while (true) {
             System.out.println("Do you want to check heroes' inventory?(y/others)");

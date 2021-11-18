@@ -39,18 +39,19 @@ public class Displayer {
     }
 
     //display the list with index
-    public static <T> void listDisplay(ArrayList<T> items, String itemName, int startIndex, int lineLength, int itemLength){
+    public static <T> String listDisplay(ArrayList<T> items, String itemName, int startIndex, int lineLength, int itemLength){
         int index = startIndex;
+        int labelLength = 10;
         StringBuilder s = new StringBuilder(itemName+" :");
         if(s.length()<itemLength)
-            s.append(" ".repeat(Math.max(0, itemLength - s.length())));
+            s.append(" ".repeat(Math.max(0, labelLength - s.length())));
         else
             itemLength = s.length();
         StringBuilder stringBuilder = new StringBuilder(s);
         for(T t : items){
             if((index-startIndex) % lineLength == 0 && (index-startIndex)!=0) {
                 stringBuilder.append("\n");
-                stringBuilder.append(" ".repeat(itemLength));
+                stringBuilder.append(" ".repeat(labelLength));
             }
             s = new StringBuilder(index + "."+t.toString());
             if(s.length()<itemLength)
@@ -58,28 +59,33 @@ public class Displayer {
             stringBuilder.append(s);
             index++;
         }
-        System.out.println(stringBuilder);
+        if(items.size()==0)
+            stringBuilder.append(" ".repeat(itemLength).repeat(lineLength));
+        if(items.size() % lineLength!=0)
+            stringBuilder.append(" ".repeat(itemLength).repeat(lineLength - items.size() % lineLength));
+        stringBuilder.append("\n");
+        return stringBuilder.toString();
     }
 
     //display the list with fixed lineLength and itemLength
-    public static <T> void listDisplay(ArrayList<T> items, String itemName, int startIndex){
-        listDisplay(items,itemName,startIndex,3,30);
+    public static <T> String listDisplay(ArrayList<T> items, String itemName, int startIndex){
+        return listDisplay(items,itemName,startIndex,3,25);
     }
 
     //ask the client to choose the one of the item in the list
-    public static int chooseList(int listSize){
+    public static int chooseList(int listSize, Window window){
         while (true) {
-            System.out.println("Please make your choice:(input the number in front of the item)");
+            window.newMessage("Please make your choice:(input the number in front of the item)");
             String input = Displayer.scan.next();
             int choice;
             try {
                 choice = Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                System.out.println("Sorry, your input is illegal! Please try again.");
+                window.newMessage("Sorry, your input is illegal! Please try again.");
                 continue;
             }
             if (choice < 0 || choice > listSize-1)
-                System.out.println("Sorry, your input is illegal! Please try again.");
+                window.newMessage("Sorry, your input is illegal! Please try again.");
             else
                 return choice;
         }

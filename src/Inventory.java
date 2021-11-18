@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,22 +56,22 @@ public class Inventory {
     }
 
     //display potions and the number of potions
-    public void displayPotions(int index){
+    public String displayPotions(int index){
         ArrayList<String> strings = new ArrayList<>();
         potions.forEach((k, v) -> strings.add(k.getName()+" * "+v));
-        Displayer.listDisplay(strings,"Potions",index);
+        return Displayer.listDisplay(strings,"Potions",index);
     }
 
-    public void displayArmors(int index){
-        Displayer.listDisplay(armors,"Armors",index);
+    public String displayArmors(int index){
+        return Displayer.listDisplay(armors,"Armors",index);
     }
 
-    public void displaySpells(int index){
-        Displayer.listDisplay(spells,"Spells",index);
+    public String displaySpells(int index){
+        return Displayer.listDisplay(spells,"Spells",index);
     }
 
-    public void displayWeapons(int index){
-        Displayer.listDisplay(weapons,"Weapons",index);
+    public String displayWeapons(int index){
+        return Displayer.listDisplay(weapons,"Weapons",index);
     }
 
     public ArrayList<Weapon> getWeapons() {
@@ -85,38 +86,38 @@ public class Inventory {
         return spells;
     }
 
-    //display all items in inventory
-    public int display(){
+    public String getDisplayLines(){
+        StringBuilder infos = new StringBuilder();
         int index = 0;
-        displayWeapons(index);
+        infos.append(displayWeapons(index));
         index += weapons.size();
-        displayArmors(index);
+        infos.append(displayArmors(index));
         index += armors.size();
-        displaySpells(index);
+        infos.append(displaySpells(index));
         index += spells.size();
-        displayPotions(index);
-        return index+ potions.size();
+        infos.append(displayPotions(index));
+        return infos.toString();
+    }
+
+    public int getTotalItemsNum(){
+        return weapons.size()+armors.size()+spells.size()+potions.size();
     }
 
     //find the item with its index
-    public Merchandise displayItems(int index){
+    public Merchandise getItem(int index){
         if(index < weapons.size()){
-            weapons.get(index).display();
             return weapons.get(index);
         }
         index-=weapons.size();
         if(index < armors.size()){
-            armors.get(index).display();
             return armors.get(index);
         }
         index-=armors.size();
         if(index <spells.size()){
-            spells.get(index).display();
             return spells.get(index);
         }
         else {
             index-=spells.size();
-            new ArrayList<>(potions.keySet()).get(index).display();
             return new ArrayList<>(potions.keySet()).get(index);
         }
     }

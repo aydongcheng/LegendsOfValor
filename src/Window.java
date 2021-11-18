@@ -2,11 +2,11 @@ import java.util.*;
 
 public abstract class Window extends CMLWidget{
     protected ArrayList<CMLWidget> subWidgets = new ArrayList<CMLWidget>();
-    private Canvas canvas;
+    protected Canvas canvas;
 
     private static LogViewWidget logViewWidget = new LogViewWidget(92, 15);
     private static int logCounter = 0;
-    
+
     public Window() {
         setWidthHeight(74 + 20, 37 + 17);
         canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
@@ -23,8 +23,12 @@ public abstract class Window extends CMLWidget{
         else {
             logViewWidget.newMessage("[" + logCounter + "]: " + message);
         }
-        
+
         logCounter += 1;
+    }
+
+    public void addSubWidget(CMLWidget subWidget){
+        subWidgets.add(subWidget);
     }
 
     public String toString() {
