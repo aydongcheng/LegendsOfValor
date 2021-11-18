@@ -250,55 +250,7 @@ public class ValorGame extends RPGGame{
         //TODO check monster
     }
 
-    /*
-    //trade with a market
-    private void trade(Market market){
-    	//TODO new market class
-        int totalNum = market.display();
-        while (true) {
-            System.out.println("Do you want to check one of the merchandises in the market?(y/others)");
-            String input = scan.next();
-            if(input.equals("y")) {
-                int index = Displayer.chooseList(totalNum);
-                Merchandise merchandise = market.displayItems(index);
-                System.out.println("Do you want to buy this merchandise for one of your heros?(y/others)");
-                input = scan.next();
-                if(input.equals("y")){
-                    System.out.println("Which hero wants to buy equipments?");
-                    team.displayHerosName();
-                    int indeOfHero = Displayer.chooseList(team.getHeroes().size());
-                    Hero hero = team.getHeroes().get(indeOfHero);
-                    if(!hero.buyMerchandise(merchandise))
-                        System.out.println("Sorry hero " + hero.getName()+" does not meet the purchase conditions");
-                    else
-                        System.out.println("Hero " + hero.getName() + " got " + merchandise.getName());
-                }
-            }
-            else break;
-        }
-        while (true) {
-            System.out.println("Do you want to sell equipments?(y/others)");
-            String input = scan.next();
-            if(input.equals("y")) {
-                System.out.println("Which hero wants to sell his/her equipment?");
-                team.displayHerosName();
-                int indeOfHero = Displayer.chooseList(team.getHeroes().size());
-                Hero hero = team.getHeroes().get(indeOfHero);
-                int NumEquipInInventory = hero.getInventory().display();
-                int indexOfEquipment = Displayer.chooseList(NumEquipInInventory);
-                Merchandise merchandise = hero.getInventory().displayItems(indexOfEquipment);
-                System.out.println("Do you want to sell this merchandise?(y/others)");
-                input = scan.next();
-                if(input.equals("y")){
-                    hero.sellMerchandise(merchandise);
-                }
-            }
-            else break;
-        }
-    }*/
-
     private void trade(Hero hero){
-    	//TODO new market class design
         Market market = new Market();
         boolean keepBuy = true;
         while (keepBuy) {
@@ -311,7 +263,7 @@ public class ValorGame extends RPGGame{
             marketAndSellWindow.addSubWidget(marketInfoWindow);
 
             ListWindow inventoryInfoWindow = new ListWindow(hero.getInventory().getClass().toString().split(" ")[1]);
-            inventoryInfoWindow.setPosition(19,1);
+            inventoryInfoWindow.setPosition(20,1);
             inventoryInfoWindow.addSubWidget(new BlankWidget(85,1+3,1,
                     hero.getInventory().getDisplayLines()));
 
@@ -320,12 +272,13 @@ public class ValorGame extends RPGGame{
             System.out.println(marketAndSellWindow);
             int totalNum = market.getTotalItemsNum();
 
-            char input = Tools.charScanner("bce");
+            char input = Tools.charScanner("bse");
             switch (input){
                 case 'b':
                     int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
                     Merchandise merchandise = market.getItem(index);
                     marketAndSellWindow.newMessage(merchandise.getDisplayLines().toString());
+                    System.out.println(marketAndSellWindow);
                     System.out.println("Are you sure to buy this merchandise?(y/others)");
                     String check= scan.next();
                     if(check.equals("y")) {
@@ -339,17 +292,19 @@ public class ValorGame extends RPGGame{
                     int NumEquipInInventory = hero.getInventory().getTotalItemsNum();
                     if(NumEquipInInventory == 0) {
                         marketAndSellWindow.newMessage("Sorry, you don't have any merchandise.");
+                        System.out.println(marketAndSellWindow);
                         break;
                     }
                     int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to sell:",0,
                             NumEquipInInventory-1);
                     merchandise = hero.getInventory().getItem(indexOfEquipment);
                     marketAndSellWindow.newMessage(merchandise.getDisplayLines().toString());
+                    System.out.println(marketAndSellWindow);
                     System.out.println("Are you sure to sell this merchandise?(y/others)");
                     check = scan.next();
                     if(check.equals("y")) {
                         hero.sellMerchandise(merchandise);
-                        System.out.println("Hero " + hero.getName() + " sold " + merchandise.getName());
+                        marketAndSellWindow.newMessage("Hero " + hero.getName() + " sold " + merchandise.getName());
                     }
                     break;
                 case 'e':

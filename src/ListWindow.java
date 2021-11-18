@@ -1,5 +1,3 @@
-import java.util.ArrayList;
-
 public class ListWindow extends Window{
     public ListWindow(){}
 

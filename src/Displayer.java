@@ -73,19 +73,19 @@ public class Displayer {
     }
 
     //ask the client to choose the one of the item in the list
-    public static int chooseList(int listSize, Window window){
+    public static int chooseList(int listSize){
         while (true) {
-            window.newMessage("Please make your choice:(input the number in front of the item)");
+            System.out.println("Please make your choice:(input the number in front of the item)");
             String input = Displayer.scan.next();
             int choice;
             try {
                 choice = Integer.parseInt(input);
             } catch (NumberFormatException e) {
-                window.newMessage("Sorry, your input is illegal! Please try again.");
+                System.out.println("Sorry, your input is illegal! Please try again.");
                 continue;
             }
             if (choice < 0 || choice > listSize-1)
-                window.newMessage("Sorry, your input is illegal! Please try again.");
+                System.out.println("Sorry, your input is illegal! Please try again.");
             else
                 return choice;
         }

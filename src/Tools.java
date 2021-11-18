@@ -5,15 +5,14 @@
 import java.util.Scanner;
 
 public  class Tools {
-	
-	private static Scanner sc;
+
+	private static Scanner sc = new Scanner(System.in);
 
 	public Tools() {
-		Scanner sc = new Scanner(System.in);
 		this.sc = sc;
 		// TODO scanner not closed?
 	}
-	
+
 	//for reading char input
 	public static char charScanner (String range) {
 		String input = sc.next();
@@ -34,8 +33,8 @@ public  class Tools {
 			return ch;
 		}
 	}
-	
-	
+
+
 
 	//for reading an int input
 	public static int intScanner (int lowerBound, int upperBound) {
@@ -55,15 +54,15 @@ public  class Tools {
 			int i = intScanner(lowerBound, upperBound);
 			return i;
 		}
-		
+
 	}
-	
+
 	/*
 	 * TODO slow down the display of info
 	 */
 	/*
 	public void slowPrint () {
-		
+
 	}
 	*/
 }

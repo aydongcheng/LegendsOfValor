@@ -1,7 +1,7 @@
 public class InfoWindow extends Window{
     public InfoWindow(){
         super();
-        setWidthHeight(94+20, 42);
+        setWidthHeight(94+20, 37+17);
         canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
         messages = new String[]{"  +----------+",
                 "  |  Manual  |",
