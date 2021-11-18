@@ -5,12 +5,13 @@ import java.util.Random;
 public class RandomMonsterCreator implements MonsterCreator{
     public RandomMonsterCreator(){}
 
+    //TODO
     @Override
     public Monster createMonster() {
         return createMonster(-1);
     }
 
-    public Monster createMonster(int level){
+    public static Monster createMonster(int level){
         Random r = new Random();
         int i = r.nextInt(RandomMonsterCreator.fileName.length);
         List<String> lines = new FileReader().readFile(RandomMonsterCreator.fileName[i]);

@@ -2,6 +2,14 @@
 public abstract class Characters implements Fightable, LevelUp{
     public Characters(){}
 
+    private String name;
+    private int hp;
+    private int level;
+    private boolean isFaint;
+    
+    private int row;
+    private int column;
+    
     //create character with name
     public Characters(String name){
         setName(name);
@@ -39,12 +47,18 @@ public abstract class Characters implements Fightable, LevelUp{
     protected void setFaint(boolean faint) {
         isFaint = faint;
     }
+    
+    //location related methods are below
+    public void move(int row, int column){
+        setColumn(column);
+        setRow(row);
+    }
 
     public int getRow() {
         return row;
     }
 
-    protected void setRow(int row) {
+    public void setRow(int row) {
         this.row = row;
     }
 
@@ -52,19 +66,8 @@ public abstract class Characters implements Fightable, LevelUp{
         return column;
     }
 
-    protected void setColumn(int column) {
+    public void setColumn(int column) {
         this.column = column;
     }
 
-    protected void move(int row, int column){
-        setRow(row);
-        setColumn(column);
-    }
-
-    private int row;
-    private int column;
-    private String name;
-    private int hp;
-    private int level;
-    private boolean isFaint;
 }

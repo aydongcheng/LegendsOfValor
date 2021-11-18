@@ -3,6 +3,22 @@ import java.util.Random;
 
 //the entity of all kinds of heroes
 public class Hero extends Characters{
+
+    private int mana;
+    private int strength;
+    private int agility;
+    private int dexterity;
+    private int money;
+    private int exp;
+    private Weapon weapon;
+    private Armor armor;
+    private Spell spell;
+    private Inventory inventory;
+
+    //TODO location is stored in Character class
+    private int row;
+    private int column;
+    
     public Hero(){}
 
     //create hero with attributes
@@ -20,6 +36,10 @@ public class Hero extends Characters{
         armor = null;
         spell = null;
         inventory = new Inventory();
+        
+        //temp location
+        setRow(7);
+        setColumn(0);
     }
 
     //create hero with attributes in string list form
@@ -33,7 +53,7 @@ public class Hero extends Characters{
     public int attack() {
         int damage = getStrength();
         if(weapon!=null)
-            damage += weapon.attack();
+            damage += weapon.getDamage();
         return (int) Math.ceil(damage*0.05);
     }
 
@@ -61,7 +81,7 @@ public class Hero extends Characters{
     public int SpellAttack(){
         if(spell!=null && getMana() >= spell.getManaCost()) {
             setMana(getMana()-spell.getManaCost());
-            return (int) spell.cast() + (getDexterity() / 10000) * spell.cast();
+            return (int) spell.getDamage() + (getDexterity() / 10000) * spell.getDamage();
         }
         else return 0;
     }
@@ -109,22 +129,48 @@ public class Hero extends Characters{
         setHp(getLevel()*100);
     }
 
+    
+    
+    
+    public void checkInfo() {
+        int NumEquipInInventory = this.getInventory().display();
+        if(NumEquipInInventory==0)
+            System.out.println("Hero " + this.getName() + " doesn't have any equipment.");
+        else {
+            System.out.println("Does hero "+ this.getName()+" want to change his/her equipment or use potions?(y/n)");
+            char input = Tools.charScanner("yn");
+            if(input == 'y') {
+                System.out.println("Select the equipment hero want to equip or use.");
+                int indexOfEquipment = Displayer.chooseList(NumEquipInInventory);
+                Merchandise merchandise = this.getInventory().displayItems(indexOfEquipment);
+                System.out.println("Do you want to equip or use this merchandise?(y/n)");
+                char in = Tools.charScanner("y n");
+                if(in == 'y') {
+                    this.equipOrUseMerchandise(merchandise);
+                }
+            }
+        }
+    }
+    
+    
     //buy a merchandise and store it to the inventory
     public boolean buyMerchandise(Merchandise merchandise){
         if(merchandise.getMinLevel() > getLevel() || getMoney() < merchandise.getPrice())
             return false;
         else {
-            if (merchandise instanceof Weapon)
-                inventory.addWeapon((Weapon) merchandise);
-            else if (merchandise instanceof Armor)
-                inventory.addArmor((Armor) merchandise);
-            else if (merchandise instanceof Potion)
-                inventory.addPotion((Potion) merchandise);
-            else
-                inventory.addSpell((Spell) merchandise);
-        }
+            switch (merchandise.getType()){
+                case "Weapon":
+                    inventory.addWeapon((Weapon) merchandise);break;
+                case "Armor":
+                    inventory.addArmor((Armor) merchandise);break;
+                case "Spell":
+                    inventory.addSpell((Spell) merchandise);break;
+                case "Potion":
+                    inventory.addPotion((Potion) merchandise);break;
+            }
             setMoney(getMoney()-merchandise.getPrice());
             return true;
+        }
     }
 
     //sell the merchandise in the inverntory
@@ -150,9 +196,11 @@ public class Hero extends Characters{
         addMoney(merchandise.getPrice()/2);
     }
 
+    //trade with a market
+    
     //use a potion
     public void consumePotion(Potion potion){
-        int increase = potion.consume();
+        int increase = potion.getAttributeIncrease();
         String[] attributes = potion.getAttributes();
         for(String attribute: attributes){
             switch (attribute){
@@ -224,6 +272,9 @@ public class Hero extends Characters{
         return attributes;
     }
 
+    public void display(){
+        Displayer.displayLines(getDisplayLines());
+    }
 
     public int getMana() {
         return mana;
@@ -278,21 +329,15 @@ public class Hero extends Characters{
     }
 
     public void setWeapon(Weapon weapon) {
-        this.weapon.unequip();
         this.weapon = weapon;
-        this.weapon.equip();
     }
 
     public void setArmor(Armor armor) {
-        this.armor.unequip();
         this.armor = armor;
-        this.armor.equip();
     }
 
     public void setSpell(Spell spell) {
-        this.spell.unequip();
         this.spell = spell;
-        this.spell.equip();
     }
 
     public Weapon getWeapon() {
@@ -312,14 +357,4 @@ public class Hero extends Characters{
         return getName();
     }
 
-    private int mana;
-    private int strength;
-    private int agility;
-    private int dexterity;
-    private int money;
-    private int exp;
-    private Weapon weapon;
-    private Armor armor;
-    private Spell spell;
-    private Inventory inventory;
 }
