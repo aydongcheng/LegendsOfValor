@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 //the entity of game monster and hero
@@ -21,26 +22,29 @@ public class ValorGame extends RPGGame{
 
     //game start
     public void start(){
-        System.out.println("--------------Welcome to Legends of Valor--------------");
-        //generate monster, hero team, monster team
+    	Window welcomeWindow = new WelcomeWindow();
+    	welcomeWindow.newMessage("Welcome to Legends of Valor!");
+        System.out.println(welcomeWindow);
+        scan.nextLine();
     	//pick hero phase, choose 3
-        System.out.println("\nFirst of all, let's build a team of 3 heroes:");
-        hTeam.chooseHero();
-
-        //TODO method: print team info
-        System.out.print("You built a Team of ");
-
+        chooseHero();
+        Window combatWindow = new CombatWindow();
+        
+        //TODO A method to print info of two teams & put messages into log
+        System.out.print("You have built a Team of ");
         hTeam.displayHerosName();
         mTeam.displayMonstersName();
-
-        printInstruction();
-		//print map,
-
+        
 		//start
+        LVBoard theBoard = ((CombatWindow)combatWindow).getTheBoard();
+        //initiate hero location
+        for(int i=0,j=0; i<=8; i+=3,j++) {
+            theBoard.cells[7][i].slot1Arrive(j);
+            hTeam.getHeroes().get(j).move(7, i);
+        }
 		//round start
 			//turn start, iterate the arrayList of heroes
 			//hero 1 move
-				//buy at market
 			//hero 2
 			//hero 3
 			//monsters' turns
@@ -54,11 +58,9 @@ public class ValorGame extends RPGGame{
             //display the map
         	roundCounter++;
         	System.out.printf("This is round %d, Hero Action Phase:\n", roundCounter);
+            System.out.println(combatWindow);
             for(Hero h : hTeam.getHeroes()) {
-//	            mahBoard.display(h.getRow(), h.getColumn());
-	            chooseAction(h);
-
-
+	            chooseAction(h, theBoard, (CombatWindow)combatWindow);
 
 	            /* previous engagement check
 	            if(action.equals("move")){
@@ -82,7 +84,6 @@ public class ValorGame extends RPGGame{
 	                }
 	            }
 	            */
-
             }
             System.out.println("Hero Phase end. Monster Action Phase:");
             for(Monster m : mTeam.getMonsters()) {
@@ -102,18 +103,8 @@ public class ValorGame extends RPGGame{
     }
 
 
-
-    //TODO update with new UI
-    private void printInstruction(){
-        System.out.println("+---------------------------------------+");
-        System.out.println("|Move: w a s d; Information: i; Quit: q |");
-        System.out.println("|H: Heroes;  N: inaccessible;  M: Market|");
-        System.out.println("|C: Wild                                |");
-        System.out.println("+---------------------------------------+");
-    }
-
     //choose the action for each of heroes
-    private void chooseAction(Hero h){
+    private void chooseAction(Hero h, LVBoard b, CombatWindow c){
     	System.out.printf("This is %s' turn, ", h.getName());
         System.out.println("please choose an action from below:\n"
         		+ "1. Move\n"
@@ -126,69 +117,133 @@ public class ValorGame extends RPGGame{
         		+ "8. Back to Nexus\n"
         		+ "9. End Turn\n"
         		+ "0. Quit Game");
-        int input = Tools.intScanner(1,9);
+        int input = Tools.intScanner(0,9);
         switch(input) {
         case 1:
             System.out.println("Please choose your direction:");
-            while(true) {
-	            char direction = Tools.charScanner("wasd");
-	            if(direction == 'w'){
-	                if(checkMove(h.getRow()-1, h.getColumn())){
+            char direction = Tools.charScanner("wasd");
+            if(direction == 'w'){
+                if(checkMove(h.getRow()-1, h.getColumn(), b)){
+                	//check slot availability
+                	if (b.cells[h.getRow()-1][h.getColumn()].slot1.trim().isEmpty()) {
+                		//arrive, leave
+                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
 	                    h.move(h.getRow()-1, h.getColumn());
+                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+                    	//update highest record
 	                    hTeam.updateHighest();
 	                    break;
-	                }
-	                else
-	                    System.out.println("The place is inaccessible. Please try again.");
-	            }
-	            else if(direction == 's'){
-	                if(checkMove(h.getRow()+1, h.getColumn())){
-	                    h.move(h.getRow()+1, h.getColumn());
+                    }
+                    else if(b.cells[h.getRow()-1][h.getColumn()].slot2.trim().isEmpty()) {
+                		//arrive, leave
+                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+	                    h.move(h.getRow()-1, h.getColumn());
+                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+	                    hTeam.updateHighest();
 	                    break;
-	                }
-	                else
-	                    System.out.println("The place is inaccessible. Please try again.");
-	            }
-	            else if(direction == 'a'){
-	                if(checkMove(h.getRow(), h.getColumn()-1)){
-	                    h.move(h.getRow(), h.getColumn()-1);
-	                    break;
-	                }
-	                else
-	                    System.out.println("The place is inaccessible. Please try again.");
-	            }
-	            else if(direction == 'd'){
-	                if(checkMove(h.getRow(), h.getColumn()+1)){
-	                    h.move(h.getRow(), h.getColumn()+1);
-	                    break;
-	                }
-	                else
-	                    System.out.println("The place is inaccessible. Please try again.");
-	            }
+                    }
+                    else {
+                    	System.out.println("The slots of this cell are full. Please try again.");
+                    }
+                }
+                else
+                    System.out.println("The place is inaccessible. Please try again.");
             }
+            else if(direction == 's'){
+                if(checkMove(h.getRow()+1, h.getColumn(), b)){
+                	//check slot availability
+                	if (b.cells[h.getRow()+1][h.getColumn()].slot1.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
+	                    h.move(h.getRow()+1, h.getColumn());
+                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+                        break;
+                    }
+                    else if(b.cells[h.getRow()+1][h.getColumn()].slot2.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+	                    h.move(h.getRow()+1, h.getColumn());
+                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+                        break;
+                    }
+                    else {
+                    	System.out.println("The slots of this cell are full. Please try again.");
+                    }
+                }
+                else
+                    System.out.println("The place is inaccessible. Please try again.");
+            }
+            else if(direction == 'a'){
+                if(checkMove(h.getRow(), h.getColumn()-1, b)){
+                	//check slot availability
+                	if (b.cells[h.getRow()][h.getColumn()-1].slot1.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
+	                    h.move(h.getRow(), h.getColumn()-1);
+                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+                        break;
+                    }
+                    else if(b.cells[h.getRow()][h.getColumn()-1].slot2.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+	                    h.move(h.getRow(), h.getColumn()-1);
+                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+                        break;
+                    }
+                    else {
+                    	System.out.println("The slots of this cell are full. Please try again.");
+                    }
+                }
+                else
+                    System.out.println("The place is inaccessible. Please try again.");
+            }
+            else if(direction == 'd'){
+                if(checkMove(h.getRow(), h.getColumn()+1, b)){
+                	//check slot availability
+                	if (b.cells[h.getRow()][h.getColumn()+1].slot1.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
+	                    h.move(h.getRow(), h.getColumn()+1);
+                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+                        break;
+                    }
+                    else if(b.cells[h.getRow()][h.getColumn()+1].slot2.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+	                    h.move(h.getRow(), h.getColumn()+1);
+                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+                        break;
+                    }
+                    else {
+                    	System.out.println("The slots of this cell are full. Please try again.");
+                    }
+                }
+                else
+                    System.out.println("The place is inaccessible. Please try again.");
+            }
+            chooseAction(h, b, c);
         	break;
+        	
         //check info
         case 2:
             ArrayList<ArrayList<StringBuilder>> stringBuilder = new ArrayList<>();
             for(Hero hero:hTeam.getHeroes())
                 stringBuilder.add(hero.getDisplayLines());
             Displayer.formDisplay(stringBuilder,3,30);
-//            h.checkInfo();
-            chooseAction(h);
+            //h.checkInfo();
+            chooseAction(h, b, c);
         	break;
         //buy
         case 3:
-        	//TODO new market
+        	//new market
             if(mahBoard.getCells()[h.getRow()][h.getColumn()] instanceof NexusCell) {
                 //trade
                 trade(h);
+                chooseAction(h, b, c);
             }
-            else System.out.println("You are not in nexus, you cannot buy anything!");
+            else{
+            	System.out.println("You are not in nexus, you cannot buy anything!");
+                chooseAction(h, b, c);
+            }
         	break;
         //print map
         case 4:
-//            mahBoard.display(h.getRow(), h.getColumn());
-            chooseAction(h);
+        	System.out.println(c);
+            chooseAction(h, b, c);
         	break;
         //Attack
         case 5:
@@ -202,21 +257,32 @@ public class ValorGame extends RPGGame{
         case 7:
             System.out.println("You are teleporting to:");
             System.out.println("Row:");
-            int r = Tools.intScanner(1,8)-1;
+            int row = Tools.intScanner(1,8)-1;
             System.out.println("Column:");
-            int c = Tools.intScanner(1,8)-1;
+            int column = Tools.intScanner(1,8)-1;
             //TODO check monster
-            if(!checkMove(r, c)){
+            if(!checkMove(row, column, b)){
+            	//check slot availability
+            	if (b.cells[row][column].slot1.trim().isEmpty()) {
+                	b.cells[h.getRow()][h.getColumn()].slot1Leave();
+                    h.move(row, column);
+                	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+                }
+                else if(b.cells[row][column].slot2.trim().isEmpty()) {
+                	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+                    h.move(row, column);
+                	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
                 System.out.println("The place is inaccessible.");
-                chooseAction(h);
+                chooseAction(h, b, c);
+                }
             }
             else {
-            	if(r>=hTeam.getHighest()) {
-                	h.move(r, c);
+            	if(row>=hTeam.getHighest()) {
+                	h.move(row, column);
             	}
             	else {
             		System.out.println("This hero can't teleport to a location higher than previous highest record");
-                    chooseAction(h);
+                    chooseAction(h, b, c);
             	}
             }
         	break;
@@ -234,20 +300,20 @@ public class ValorGame extends RPGGame{
         	break;
 
         }
-    	System.out.printf("%s' turn end.\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n", h.getName());
+    	System.out.printf("%s' turn ends.\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n", h.getName());
     }
 
     //check whether the new cell is accessible
-    private boolean checkMove(int row, int column){
-    	//check map resitriction
-        if(row>=0 && column>=0 && mahBoard.getCells()[row][column].isAccessible() && row<=7 && column <=7 )
-        	//check monster position
-        	//if()
+    private boolean checkMove(int row, int column, LVBoard b){
+    	//check map resitriction, 
+    	boolean bo= b.cells[row][column].isAccessible();
+    	System.out.printf("row%d, column%d, %b", row, column, bo);
+        if(row>=0 && column>=0 && b.cells[row][column].isAccessible() && row<=7 && column <=7 )
+	        //TODO check monster
             return true;
 
         else
         	return false;
-        //TODO check monster
     }
 
     private void trade(Hero hero){
@@ -255,7 +321,7 @@ public class ValorGame extends RPGGame{
         boolean keepBuy = true;
         while (keepBuy) {
             //display
-            InfoWindow marketAndSellWindow = new InfoWindow();
+            InfoWindow marketAndSellWindow = new InfoWindow("market");
             ListWindow marketInfoWindow = new ListWindow(market.getClass().toString().split(" ")[1]);
             marketInfoWindow.setPosition(1,1);
             marketInfoWindow.addSubWidget(new BlankWidget(85,1+3,1, market.getDisplayLines()));
@@ -348,5 +414,65 @@ public class ValorGame extends RPGGame{
         }
     }
 	*/
+    
+    //TODO choose hero to join the team
+    public void chooseHero(){
+    	//scan hero files from config
+    	ArrayList<Hero> heroesList = new ArrayList<>();
+        String[] files = new String[]{"Warriors", "Sorcerers", "Paladins"};
+        for(String file: files) {
+            List<String> lines = new FileReader().readFile(file);
+            for(int i = 1;i<lines.size();i++){
+                if(lines.get(i).equals(""))
+                    break;
+                if(file.equals("Warriors"))
+                    heroesList.add(new Warrior(lines.get(i).split("\\s+")));
+                else if(file.equals("Sorcerers"))
+                    heroesList.add(new Sorcerer(lines.get(i).split("\\s+")));
+                else
+                    heroesList.add(new Paladin(lines.get(i).split("\\s+")));
+            }
+        }
+        //print the window for choosing heroes
+        InfoWindow chooseHeroWindow = new InfoWindow("heroes");
+        ListWindow heroDetailsWindow = new ListWindow("Heroes to Choose");
+        heroDetailsWindow.setPosition(1,1);
+        heroDetailsWindow.addSubWidget(new BlankWidget(85,1+3,1, Displayer.listDisplay(heroesList,"Heroes",0)));
 
+        chooseHeroWindow.addSubWidget(heroDetailsWindow);
+        //the required number of heroes in one team is 3
+        chooseHeroWindow.newMessage("First of all, let's build a team of 3 heroes:");
+        int HeroNum = 3;
+        for(int i=0; i<HeroNum; i++){
+        	if(i!=0) {
+        		chooseHeroWindow.newMessage("Please select another hero you are interested in");
+        	}
+        	else {
+            	chooseHeroWindow.newMessage("Please select a hero you are interested in.(input the number in front of the item)");
+        	}
+            System.out.print(chooseHeroWindow);
+            int index = Tools.intScannerInWindow(0, heroesList.size(), chooseHeroWindow);
+            if(hTeam.getHeroes().contains(heroesList.get(index))) {
+            	chooseHeroWindow.newMessage("Hero " + heroesList.get(index).getName() +
+                        " is already in the team, please select other heroes.");
+                System.out.print(chooseHeroWindow);
+                i--;
+            }
+            else {
+            	//print hero attributes by line
+                chooseHeroWindow.newMessage("-----Hero's Info-----");
+            	String heroString = heroesList.get(index).getDisplayLines().toString();
+            	for(String s : heroString.substring(1, heroString.length() - 1).split(", ")) {
+                    chooseHeroWindow.newMessage(s);
+            	}
+            	chooseHeroWindow.newMessage("Do you want hero "+ heroesList.get(index).getName() + " to join your team?(y/others)");
+                System.out.print(chooseHeroWindow);
+                String input = scan.next();
+                if(input.equals("y"))
+                	hTeam.addHero(heroesList.get(index));
+                else
+                    i--;
+            }
+        }
+    }
 }

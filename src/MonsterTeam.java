@@ -35,6 +35,6 @@ public class MonsterTeam extends Team{
 
     //display the name of heroes in the team
     public void displayMonstersName(){
-        Displayer.listDisplay(Monsters,"Monsters",0);
+        System.out.print(Displayer.listDisplay(Monsters,"Monsters",0));
     }
 }

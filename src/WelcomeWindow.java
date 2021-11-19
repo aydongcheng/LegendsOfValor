@@ -10,10 +10,13 @@ public class WelcomeWindow extends Window {
         "---------------",
         "Basic Controls:",
         "---------------",
+        "**insert new instructions/greetings here**",
+        /*
         "  w: Moving Up" + "       e: Interact", 
         "  s: Moving Down" + "     c: Inventory", 
         "  a: Moving Left" + "     i: Info", 
         "  d: Moving Right" + "    q: Leave the Game", 
+        */
         "",
         "", 
         "------------", 
@@ -26,7 +29,7 @@ public class WelcomeWindow extends Window {
         "", 
         "", 
         "", 
-        "          " + ">> Press 'r' to randomly select your heros and begin the journey! <<"};
+        "          " + ">> Press Enter key to select your heroes and begin the journey! <<"};
         TextWidget textWidget = new TextWidget(92, 37, messages);
         textWidget.setPosition(1, 1);
         subWidgets.add(textWidget);        

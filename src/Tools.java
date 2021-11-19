@@ -56,7 +56,26 @@ public  class Tools {
 		}
 
 	}
+	
+	public static int intScannerInWindow (int lowerBound, int upperBound, Window w) {
+		if(sc.hasNextInt()) {
+			int i = sc.nextInt();
+			if(i<=upperBound && i>=lowerBound) {
+				return i;
+			}
+			else {
+				w.newMessage("Your input is not in the range between "+lowerBound+" and "+upperBound+";\nplease try again:");
+				i = intScanner(lowerBound, upperBound);
+				return i;
+			}
+		}
+		else {
+			w.newMessage("Your input is not an int;\nplease try again:");
+			int i = intScanner(lowerBound, upperBound);
+			return i;
+		}
 
+	}
 	/*
 	 * TODO slow down the display of info
 	 */

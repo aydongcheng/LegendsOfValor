@@ -1,7 +1,7 @@
 //the super class of all cell in the map
 public abstract class Cell extends CMLWidget{
     //whether the cell is accessible
-    private boolean isAccessible;
+    private boolean isAccessible = true;
     //the type of the cell
     private String type;
 
@@ -44,12 +44,16 @@ public abstract class Cell extends CMLWidget{
     public void slot2Leave() {
         slot2 = "  ";
     }   
-
-    public void slot1Arrive() {
-        slot1 = "H1";
+    
+    /*
+     *@param  i the index of this arriving hero
+     * use hero's index as his/hers serial number
+     */
+    public void slot1Arrive(int i) {
+        slot1 = "H" + (i+1);
     }
 
-    public void slot2Arrive() {
-        slot2 = "H1";
+    public void slot2Arrive(int i) {
+        slot2 = "H" + (i+1);
     }   
 }
