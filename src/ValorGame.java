@@ -243,7 +243,26 @@ public class ValorGame extends RPGGame{
         	break;
         //Attack
         case 5:
-
+        	attack()
+        	//attack()
+    		//search target method ()
+			//return if no target in range; return arrayList<Character>
+        	//select target
+        	ArrayList<Monster> target = new ArrayList<>();
+        	for(int i=-1,j=-1; i<=1&&j<=1; i++,j++) {
+        		
+        		//if(b.cells[][]
+        		
+        		target.add("")
+        	}
+        		
+        	for(Monster m: mTeam.getMonsters()) {
+        		m.getHurt(h.attack());
+        		c.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+m.getName());
+        	}
+        	
+        	//another method for monster attack, since m.attack() differ from h.attack()
+        	System.out.print(c);
         	break;
         //Cast spell
         case 6:
