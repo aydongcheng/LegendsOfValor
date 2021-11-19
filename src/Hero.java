@@ -281,15 +281,24 @@ public class Hero extends Characters{
     }
 
     public void setWeapon(Weapon weapon) {
+        if(this.weapon!=null)
+            this.weapon.unequip();
         this.weapon = weapon;
+        this.weapon.equip();
     }
 
     public void setArmor(Armor armor) {
+        if(this.armor!=null)
+            this.armor.unequip();
         this.armor = armor;
+        this.armor.equip();
     }
 
     public void setSpell(Spell spell) {
+        if(this.spell!=null)
+            this.spell.unequip();
         this.spell = spell;
+        this.spell.equip();
     }
 
     public Weapon getWeapon() {

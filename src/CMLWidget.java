@@ -1,4 +1,4 @@
-abstract class CMLWidget {
+public abstract class CMLWidget {
     protected int widgetWidth = 0;
     protected int widgetHeight = 0;
 

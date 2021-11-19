@@ -3,6 +3,10 @@ import java.util.*;
 public class Canvas extends CMLWidget {
     private ArrayList<CMLWidget> subWidgets;
 
+    public Canvas(ArrayList<CMLWidget> subWidgets){
+        this.subWidgets = subWidgets;
+    }
+
     public Canvas(int width, int height, ArrayList<CMLWidget> subWidgets) {
         setWidthHeight(width, height);
         this.subWidgets = subWidgets;
@@ -21,21 +25,21 @@ public class Canvas extends CMLWidget {
                         outString += "+";
                         continue secondLoop;
                     }
-        
+
                     if (cond1) {
                         outString += "-";
                         continue secondLoop;
                     }
-        
+
                     if (cond2) {
                         outString += "|";
                         continue secondLoop;
                     }
-        
+
                     // draw sub-widgets
                     CMLWidget currentWidget;
                     currentWidget = subWidgets.get(idx_3);
-        
+
                     if (currentWidget.isWithinRange(idx_1, idx_2)) {
                         if (currentWidget.isStartPoint(idx_2)) {
                             outString += currentWidget.nextLineWithLoop();
@@ -48,7 +52,7 @@ public class Canvas extends CMLWidget {
             }
             outString += "\n";
         }
-        return outString; 
+        return outString;
     }
 }
 
