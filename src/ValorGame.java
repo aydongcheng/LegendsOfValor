@@ -29,12 +29,12 @@ public class ValorGame extends RPGGame{
     	//pick hero phase, choose 3
         chooseHero();
         Window combatWindow = new CombatWindow();
-        
+
         //TODO A method to print info of two teams & put messages into log
         System.out.print("You have built a Team of ");
         hTeam.displayHerosName();
         mTeam.displayMonstersName();
-        
+
 		//start
         LVBoard theBoard = ((CombatWindow)combatWindow).getTheBoard();
         //initiate hero location
@@ -217,15 +217,9 @@ public class ValorGame extends RPGGame{
             }
             chooseAction(h, b, c);
         	break;
-        	
+
         //check info
         case 2:
-        	/*
-            ArrayList<ArrayList<StringBuilder>> stringBuilder = new ArrayList<>();
-            for(Hero hero:hTeam.getHeroes())
-                stringBuilder.add(hero.getDisplayLines());
-            Displayer.formDisplay(stringBuilder,3,30);
-            */
             checkInfo(h);
             chooseAction(h, b, c);
         	break;
@@ -324,7 +318,7 @@ public class ValorGame extends RPGGame{
 
     //check whether the new cell is accessible
     private boolean checkMove(int row, int column, LVBoard b){
-    	//check map resitriction, 
+    	//check map resitriction,
     	boolean bo= b.cells[row][column].isAccessible();
     	System.out.printf("row%d, column%d, %b", row, column, bo);
         if(row>=0 && column>=0 && b.cells[row][column].isAccessible() && row<=7 && column <=7 )
@@ -357,7 +351,7 @@ public class ValorGame extends RPGGame{
             System.out.println(marketAndSellWindow);
             int totalNum = market.getTotalItemsNum();
 
-            char input = Tools.charScanner("bse");
+            char input = Utils.safeCharInput("Input",new char[]{'b','s','e'});
             switch (input){
                 case 'b':
                     int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
@@ -400,58 +394,57 @@ public class ValorGame extends RPGGame{
     }
 
     private void checkInfo(Hero h) {
-    	//print windows: Status, Inventory; manual: u.use/equip, r.remove, e.exit 
-        InfoWindow heroStatusWindow = new InfoWindow("status");
-        ListWindow statusWindow = new ListWindow("Current Status");
-        statusWindow.setPosition(1,1);
-        statusWindow.addSubWidget(new BlankWidget(85,1+3,1, h.getDisplayString()));
+        boolean keepCheck = true;
+        while(keepCheck) {
+            //print windows: Status, Inventory; manual: u.use/equip, r.remove, e.exit
+            InfoWindow heroStatusWindow = new InfoWindow("status");
+            ListWindow statusWindow = new ListWindow("Current Status");
+            statusWindow.setPosition(1, 1);
+            ArrayList<ArrayList<StringBuilder>> heroInfos = new ArrayList<>();
+            heroInfos.add(h.getDisplayLines());
+            CardWiget heroInfo = new CardWiget(heroInfos);
+            heroInfo.setPosition(1 + 3, 1);
+            statusWindow.addSubWidget(heroInfo);
 
-        heroStatusWindow.addSubWidget(statusWindow);
+            heroStatusWindow.addSubWidget(statusWindow);
 
-        ListWindow inventoryInfoWindow = new ListWindow(h.getInventory().getClass().toString().split(" ")[1]);
-        inventoryInfoWindow.setPosition(20,1);
-        inventoryInfoWindow.addSubWidget(new BlankWidget(85,1+3,1, h.getInventory().getDisplayLines()));
+            ListWindow inventoryInfoWindow = new ListWindow(h.getInventory().getClass().toString().split(" ")[1]);
+            inventoryInfoWindow.setPosition(20, 1);
+            inventoryInfoWindow.addSubWidget(new BlankWidget(85, 1 + 3, 1, h.getInventory().getDisplayLines()));
 
-        heroStatusWindow.addSubWidget(inventoryInfoWindow);
+            heroStatusWindow.addSubWidget(inventoryInfoWindow);
 
-    	//print
-    	System.out.print(heroStatusWindow);
-    }
-    //change equipment and use potions when not fighting
-    /*TODO each type for an array list. In case of spells nested arrayList but print "spell:"?
-    private void equipHero(){
-        while (true) {
-            System.out.println("Do you want to check heroes' inventory?(y/others)");
-            String input = scan.next();
-            if(input.equals("y")) {
-                System.out.println("Which heroes' inventory do you want to check?");
-                team.displayHerosName();
-                int indeOfHero = Displayer.chooseList(team.getHeroes().size());
-                }
-                Hero hero = team.getHeroes().get(indeOfHero);
-                int NumEquipInInventory = hero.getInventory().display();
-                if(NumEquipInInventory==0)
-                    System.out.println("Hero " + hero.getName() + " doesn't have any equipment.");
-                else {
-                    System.out.println("Does hero "+ hero.getName()+" want to change his/her equipment or use potions?(y/n)");
-                    input = scan.next();
-                    if(input.equals("y")) {
-                        System.out.println("Select the equipment hero want to equip or use.");
-                        int indexOfEquipment = Displayer.chooseList(NumEquipInInventory);
-                        Merchandise merchandise = hero.getInventory().displayItems(indexOfEquipment);
-                        System.out.println("Do you want to equip or use this merchandise?(y/others)");
-                        input = scan.next();
-                        if (input.equals("y")) {
-                            hero.equipOrUseMerchandise(merchandise);
-                        }
+            //print
+            System.out.print(heroStatusWindow);
+
+            char input = Utils.safeCharInput("Input",new char[]{'u','e'});
+            switch (input) {
+                case 'u':
+                    int NumEquipInInventory = h.getInventory().getTotalItemsNum();
+                    if(NumEquipInInventory == 0) {
+                        heroStatusWindow.newMessage("Sorry, you don't have any merchandise.");
+                        System.out.println(heroStatusWindow);
+                        break;
                     }
-                }
+                    int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to equip or use:",0,
+                            NumEquipInInventory-1);
+                    Merchandise merchandise = h.getInventory().getItem(indexOfEquipment);
+                    heroStatusWindow.newMessage(merchandise.getDisplayLines().toString());
+                    System.out.println(heroStatusWindow);
+                    System.out.println("Are you sure to equip or use this merchandise?(y/others)");
+                    String check = scan.next();
+                    if(check.equals("y")) {
+                        h.equipOrUseMerchandise(merchandise);
+                    }
+                    break;
+                case 'e':
+                    keepCheck = false;
+                    break;
             }
-            else break;
         }
+
     }
-	*/
-    
+
     //choose hero to join the team
     public void chooseHero(){
     	//scan hero files from config

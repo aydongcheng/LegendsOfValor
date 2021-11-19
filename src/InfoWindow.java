@@ -21,7 +21,7 @@ public class InfoWindow extends Window{
                     "    s: Sell",
                     "    e: Exit",};
             break;
-        /*not sure 
+        /*not sure
     	case "map":
             this.messages = new String[]{"  +----------+",
                     "  |  Manual  |",
@@ -56,7 +56,6 @@ public class InfoWindow extends Window{
                     "  +----------+",
                     "----------------",
                     "  u: Use/Equip",
-                    "  r: Remove",
                     "  e: Exit",};
     		break;
     	}
