@@ -37,7 +37,7 @@ public class HeroTeam extends Team{
     
     public void updateHighest() {
     	for(Hero h : heroes) {
-    		if(h.getRow()>this.highest) 
+    		if(h.getRow()<this.highest) 
     			this.highest = h.getRow();
     		else
     			continue;

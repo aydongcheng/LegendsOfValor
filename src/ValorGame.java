@@ -220,11 +220,13 @@ public class ValorGame extends RPGGame{
         	
         //check info
         case 2:
+        	/*
             ArrayList<ArrayList<StringBuilder>> stringBuilder = new ArrayList<>();
             for(Hero hero:hTeam.getHeroes())
                 stringBuilder.add(hero.getDisplayLines());
             Displayer.formDisplay(stringBuilder,3,30);
-            //h.checkInfo();
+            */
+            checkInfo(h);
             chooseAction(h, b, c);
         	break;
         //buy
@@ -262,23 +264,27 @@ public class ValorGame extends RPGGame{
             int column = Tools.intScanner(1,8)-1;
             //TODO check monster
             if(!checkMove(row, column, b)){
-            	//check slot availability
-            	if (b.cells[row][column].slot1.trim().isEmpty()) {
-                	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-                    h.move(row, column);
-                	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
-                }
-                else if(b.cells[row][column].slot2.trim().isEmpty()) {
-                	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-                    h.move(row, column);
-                	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
                 System.out.println("The place is inaccessible.");
                 chooseAction(h, b, c);
-                }
             }
             else {
+            	//check highest
             	if(row>=hTeam.getHighest()) {
-                	h.move(row, column);
+                	//check slot availability
+                	if (b.cells[row][column].slot1.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
+                        h.move(row, column);
+                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+                    }
+                    else if(b.cells[row][column].slot2.trim().isEmpty()) {
+                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+                        h.move(row, column);
+                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+                    }
+                	else {
+                    	System.out.println("The slots of this cell are full. Please try again.");
+                        chooseAction(h, b, c);
+                	}
             	}
             	else {
             		System.out.println("This hero can't teleport to a location higher than previous highest record");
@@ -288,7 +294,20 @@ public class ValorGame extends RPGGame{
         	break;
         //Back to Nexus
         case 8:
-        	h.setRow(7);
+        	if (b.cells[7][h.getColumn()].slot1.trim().isEmpty()) {
+            	b.cells[h.getRow()][h.getColumn()].slot1Leave();
+                h.move(7, h.getColumn());
+            	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+            }
+            else if(b.cells[7][h.getColumn()].slot2.trim().isEmpty()) {
+            	b.cells[h.getRow()][h.getColumn()].slot2Leave();
+                h.move(7, h.getColumn());
+            	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+            }
+        	else {
+            	System.out.println("The slots of this cell are full. Please try again.");
+                chooseAction(h, b, c);
+        	}
         	break;
         //End turn
         case 9:
@@ -380,6 +399,24 @@ public class ValorGame extends RPGGame{
         }
     }
 
+    private void checkInfo(Hero h) {
+    	//print windows: Status, Inventory; manual: u.use/equip, r.remove, e.exit 
+        InfoWindow heroStatusWindow = new InfoWindow("status");
+        ListWindow statusWindow = new ListWindow("Current Status");
+        statusWindow.setPosition(1,1);
+        statusWindow.addSubWidget(new BlankWidget(85,1+3,1, h.getDisplayString()));
+
+        heroStatusWindow.addSubWidget(statusWindow);
+
+        ListWindow inventoryInfoWindow = new ListWindow(h.getInventory().getClass().toString().split(" ")[1]);
+        inventoryInfoWindow.setPosition(20,1);
+        inventoryInfoWindow.addSubWidget(new BlankWidget(85,1+3,1, h.getInventory().getDisplayLines()));
+
+        heroStatusWindow.addSubWidget(inventoryInfoWindow);
+
+    	//print
+    	System.out.print(heroStatusWindow);
+    }
     //change equipment and use potions when not fighting
     /*TODO each type for an array list. In case of spells nested arrayList but print "spell:"?
     private void equipHero(){
@@ -415,7 +452,7 @@ public class ValorGame extends RPGGame{
     }
 	*/
     
-    //TODO choose hero to join the team
+    //choose hero to join the team
     public void chooseHero(){
     	//scan hero files from config
     	ArrayList<Hero> heroesList = new ArrayList<>();

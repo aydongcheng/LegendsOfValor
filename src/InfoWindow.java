@@ -50,8 +50,15 @@ public class InfoWindow extends Window{
                     "  the index",
                     "  of each Hero",};
     		break;
-    	//case "status":
-    		//break;
+    	case "status":
+            this.messages = new String[]{"  +----------+",
+                    "  |  Manual  |",
+                    "  +----------+",
+                    "----------------",
+                    "  u: Use/Equip",
+                    "  r: Remove",
+                    "  e: Exit",};
+    		break;
     	}
     }
     private String[] messages;

@@ -9,7 +9,6 @@ public  class Tools {
 	private static Scanner sc = new Scanner(System.in);
 
 	public Tools() {
-		this.sc = sc;
 		// TODO scanner not closed?
 	}
 
@@ -40,6 +39,7 @@ public  class Tools {
 	public static int intScanner (int lowerBound, int upperBound) {
 		if(sc.hasNextInt()) {
 			int i = sc.nextInt();
+			sc.nextLine();
 			if(i<=upperBound && i>=lowerBound) {
 				return i;
 			}
