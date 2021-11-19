@@ -37,11 +37,11 @@ public abstract class Cell extends CMLWidget{
 
     public abstract String toString();
 
-    public void slot1Leave() {
+    public void slot1Leave(Hero h) {
         slot1 = "  ";
     }
 
-    public void slot2Leave() {
+    public void slot2Leave(Hero h) {
         slot2 = "  ";
     }   
     
@@ -49,11 +49,11 @@ public abstract class Cell extends CMLWidget{
      *@param  i the index of this arriving hero
      * use hero's index as his/hers serial number
      */
-    public void slot1Arrive(int i) {
+    public void slot1Arrive(int i, Hero h) {
         slot1 = "H" + (i+1);
     }
 
-    public void slot2Arrive(int i) {
+    public void slot2Arrive(int i, Hero h) {
         slot2 = "H" + (i+1);
     }   
 }

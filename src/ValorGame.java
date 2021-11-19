@@ -396,7 +396,12 @@ public class ValorGame extends RPGGame{
                     int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to sell:",0,
                             NumEquipInInventory-1);
                     merchandise = hero.getInventory().getItem(indexOfEquipment);
-                    marketAndSellWindow.newMessage(merchandise.getDisplayLines().toString());
+                    //print Merchandise attributes by line
+                    marketAndSellWindow.newMessage("-----Merchandise's Info-----");
+                    String merInfo = merchandise.getDisplayLines().toString();
+                    for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
+                        marketAndSellWindow.newMessage(s);
+                    }
                     System.out.println(marketAndSellWindow);
                     System.out.println("Are you sure to sell this merchandise?(y/others)");
                     check = scan.next();
@@ -448,7 +453,12 @@ public class ValorGame extends RPGGame{
                     int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to equip or use:",0,
                             NumEquipInInventory-1);
                     Merchandise merchandise = h.getInventory().getItem(indexOfEquipment);
-                    heroStatusWindow.newMessage(merchandise.getDisplayLines().toString());
+                    //print Merchandise attributes by line
+                    heroStatusWindow.newMessage("-----Merchandise's Info-----");
+                    String merInfo = merchandise.getDisplayLines().toString();
+                    for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
+                        heroStatusWindow.newMessage(s);
+                    }
                     System.out.println(heroStatusWindow);
                     System.out.println("Are you sure to equip or use this merchandise?(y/others)");
                     String check = scan.next();
