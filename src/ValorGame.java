@@ -59,7 +59,7 @@ public class ValorGame extends RPGGame{
         // initialize monsters' locations
         for(int i=0,j=0; i<=8; i+=3,j++) {
             Monster monsterTmp = mTeam.getMonsters().get(j);
-            lvBoard.cells[0][i].arrive(monsterTmp, j, false);
+            lvBoard.cells[0][i].arrive(monsterTmp, monsterTmp.getIdx(), false);
             monsterTmp.move(0, i);
         }
 
@@ -71,7 +71,7 @@ public class ValorGame extends RPGGame{
         	if(roundCounter!=0 && roundCounter%8==0){
         	    for(int i=0, j=0; i<=8; i+=3,j++){
         	        Monster newMonster = RandomMonsterCreator.createMonster(hTeam.getHeroes().get(j).getLevel());
-                    lvBoard.cells[0][i].arrive(newMonster, j, false);
+                    lvBoard.cells[0][i].arrive(newMonster, newMonster.getIdx(), false);
                     newMonster.move(0, i);
                     mTeam.getMonsters().add(newMonster);
                 }
@@ -116,7 +116,8 @@ public class ValorGame extends RPGGame{
                     int rowNext = rowCurrent + 1;
                     int colNext = colCurrent;
                     if (checkMove(rowNext, colNext, "monster")) {
-                        int id = mTeam.getMonsters().indexOf(m);
+                        //int id = mTeam.getMonsters().indexOf(m);
+                    	int id = m.getIdx();
                         lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
                         m.move(rowNext, colNext);
                         lvBoard.cells[rowNext][colNext].arrive(m, id, false);
@@ -204,6 +205,7 @@ public class ValorGame extends RPGGame{
                         if (targetListAttack.size() != 0) {
                             Window.newMessage("A monster is in your way!");
                             break;
+                        }
                         rowNext = h.getRow() - 1;
                         colNext = h.getColumn();
                     }
@@ -219,7 +221,12 @@ public class ValorGame extends RPGGame{
                         rowNext = h.getRow();
                         colNext = h.getColumn() + 1;
                     }
-
+                    
+                    if(rowNext == 0) {
+                        Window.newMessage("Heroes Win!!!");
+                        quitGame();
+                    }
+                    
                     if (checkMove(rowNext, colNext, "hero")) {
                         //arrive, leave
                         lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
@@ -230,10 +237,6 @@ public class ValorGame extends RPGGame{
                         break outerLoop;
                     }
                     Window.newMessage("You cannot go there!");
-                    if(rowNext == 0) {
-                        Window.newMessage("Heroes Win!!!");
-                        quitGame();
-                    }
                     break;
 
                 //check info
@@ -270,7 +273,7 @@ public class ValorGame extends RPGGame{
                     if(targetTmpAttack.isFaint()){
                         Window.newMessage("Monster "+ targetTmpAttack.getName() +" is dead!");
                         lvBoard.cells[targetTmpAttack.getRow()][targetTmpAttack.getColumn()]
-                                .leave(targetTmpAttack, mTeam.getMonsters().indexOf(targetTmpAttack), false);
+                                .leave(targetTmpAttack, targetTmpAttack.getIdx(), false);
                         mTeam.getMonsters().remove(targetTmpAttack);
                         h.getRewards(targetTmpAttack.getLevel());
                     }
@@ -301,7 +304,7 @@ public class ValorGame extends RPGGame{
                     if(targetTmpSpell.isFaint()){
                         Window.newMessage("Monster "+ targetTmpSpell.getName() +" is dead!");
                         lvBoard.cells[targetTmpSpell.getRow()][targetTmpSpell.getColumn()]
-                                .leave(targetTmpSpell, mTeam.getMonsters().indexOf(targetTmpSpell), false);
+                                .leave(targetTmpSpell, targetTmpSpell.getIdx(), false);
                         mTeam.getMonsters().remove(targetTmpSpell);
                         h.getRewards(targetTmpSpell.getLevel());
                     }
