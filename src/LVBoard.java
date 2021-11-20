@@ -22,7 +22,7 @@ public class LVBoard extends Board {
         for(int i = 0; i < size; i++){
             for(int j = 0; j < size; j++){
                 if ((j == 2) || (j == 5)) {
-                    cells[i][j] = new InaccessibleCell();
+                    cells[i][j] = new InaccessibleCell(false);
                 }
                 else if ((i == 0) || (i == size - 1)) {
                     cells[i][j] = new NexusCell();

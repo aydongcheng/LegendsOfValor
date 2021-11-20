@@ -23,7 +23,7 @@ public abstract class Cell extends CMLWidget{
         setAccessible(accessible);
     };
 
-    private void setAccessible(boolean accessible) {
+    protected void setAccessible(boolean accessible) {
         isAccessible = accessible;
     }
 
