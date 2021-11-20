@@ -59,21 +59,9 @@ public class ValorGame extends RPGGame{
         // initialize monsters' locations
         for(int i=0,j=0; i<=8; i+=3,j++) {
             Monster monsterTmp = mTeam.getMonsters().get(j);
-            lvBoard.cells[0][i].arrive(monsterTmp, j, false);
-            monsterTmp.move(0, i);
+            lvBoard.cells[6][i].arrive(monsterTmp, j, false);
+            monsterTmp.move(6, i);
         }
-
-		//round start
-			//turn start, iterate the arrayList of heroes
-			//hero 1 move
-			//hero 2
-			//hero 3
-			//monsters' turns
-			//iterate for each monsters to forward/attack
-
-			//next round, round timer for add new monsters
-    		//print hero team status, monster team status
-
 
         while (roundCounter<6) {
             //display the map
@@ -162,7 +150,7 @@ public class ValorGame extends RPGGame{
         for (int idx_1 = 0; idx_1 < 3; idx_1++) {
             for (int idx_2 = 0; idx_2 < 3; idx_2++) {
                 int rowTmp = row - 1 + idx_1;
-                int colTmp = row - 1 + idx_2;
+                int colTmp = col - 1 + idx_2;
 
                 boolean cond1 = (rowTmp >=0) && (rowTmp <= 7);
                 boolean cond2 = (colTmp >=0) && (colTmp <= 7);
@@ -254,10 +242,10 @@ public class ValorGame extends RPGGame{
                     if(lvBoard.getCells()[h.getRow()][h.getColumn()] instanceof NexusCell) {
                         //trade
                         trade(h);
-                    }
+            }
                     else{
-                        Window.newMessage("You are not in nexus, you cannot buy anything!");
-                    }
+                Window.newMessage("You are not in nexus, you cannot buy anything!");
+            }
                     break;
 
                 //Attack
@@ -268,18 +256,14 @@ public class ValorGame extends RPGGame{
                         break;
                     }
 
-                    // select target
-                    Window.newMessage("Please select a target:");
-                    for (int idx = 0; idx < targetListAttack.size(); idx++) {
-                        Window.newMessage("Target #" + idx + " - " + targetListAttack.get(idx).getName());
-                    }
-                    Monster targetTmpAttack = (Monster)targetListAttack.get(Utils.safeIntInput("Input: ", 0, targetListAttack.size() - 1));
+                    Monster targetTmpAttack = chooseMonster(targetListAttack);
 
                     // perform attack
                     targetTmpAttack.getHurt(h.attack());
                     Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpAttack.getName());
 
                     if(targetTmpAttack.isFaint()){
+                        Window.newMessage("Monster "+ targetTmpAttack.getName() +" is dead!");
                         lvBoard.cells[targetTmpAttack.getRow()][targetTmpAttack.getColumn()]
                                 .leave(targetTmpAttack, mTeam.getMonsters().indexOf(targetTmpAttack), false);
                         mTeam.getMonsters().remove(targetTmpAttack);
@@ -296,12 +280,7 @@ public class ValorGame extends RPGGame{
                         break;
                     }
 
-                    // select target
-                    Window.newMessage("Please select a target:");
-                    for (int idx = 0; idx < targetListSpell.size(); idx++) {
-                        Window.newMessage("Target #" + idx + " - " + targetListSpell.get(idx).getName());
-                    }
-                    Monster targetTmpSpell = (Monster)targetListSpell.get(Utils.safeIntInput("Input: ", 0, targetListSpell.size() - 1));
+                    Monster targetTmpSpell = chooseMonster(targetListSpell);
 
                     // perform spell
                     int heroDamage = h.SpellAttack();
@@ -315,6 +294,7 @@ public class ValorGame extends RPGGame{
                     System.out.println("Monster "+ targetTmpSpell.getName() + " " + h.getSpell().getSpecil());
 
                     if(targetTmpSpell.isFaint()){
+                        Window.newMessage("Monster "+ targetTmpSpell.getName() +" is dead!");
                         lvBoard.cells[targetTmpSpell.getRow()][targetTmpSpell.getColumn()]
                                 .leave(targetTmpSpell, mTeam.getMonsters().indexOf(targetTmpSpell), false);
                         mTeam.getMonsters().remove(targetTmpSpell);
@@ -597,6 +577,26 @@ public class ValorGame extends RPGGame{
                     i--;
             }
         }
+    }
+
+    private Monster chooseMonster(ArrayList<Characters> targetList){
+        ArrayList<ArrayList<StringBuilder>> monstersInfo = new ArrayList<>();
+        // select target
+        Window.newMessage("Please select a target:");
+        for (int idx = 0; idx < targetList.size(); idx++) {
+            ArrayList<StringBuilder> monsterInfo = targetList.get(idx).getDisplayLines();
+            monsterInfo.add(0,new StringBuilder("Target " + idx ));
+            monstersInfo.add(monsterInfo);
+        }
+        InfoWindow MonsterWindow = new InfoWindow("monster");
+        ListWindow MonsterInfoWindow = new ListWindow("Monster",37);
+        MonsterInfoWindow.setPosition(1,1);
+        CardWiget monsterInfoWidget = new CardWiget(monstersInfo);
+        monsterInfoWidget.setPosition(1 + 3, 1);
+        MonsterInfoWindow.addSubWidget(monsterInfoWidget);
+        MonsterWindow.addSubWidget(MonsterInfoWindow);
+        System.out.println(MonsterWindow);
+        return (Monster)targetList.get(Utils.safeIntInput("Input: ", 0, targetList.size() - 1));
     }
 
 
