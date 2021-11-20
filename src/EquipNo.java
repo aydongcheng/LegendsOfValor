@@ -3,11 +3,11 @@ public class EquipNo implements Equipable {
 
     @Override
     public void equip() {
-        System.out.println("This is not equipable");
+        Window.newMessage("This is not equipable");
     }
 
     @Override
     public void unequip() {
-        System.out.println("This is not equipable");
+        Window.newMessage("This is not equipable");
     }
 }

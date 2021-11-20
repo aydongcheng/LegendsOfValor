@@ -8,6 +8,10 @@ public abstract class Cell extends CMLWidget{
     protected String slot1 = "  ";
     protected String slot2 = "  ";
 
+    protected Hero theHero = null;
+    protected Monster theMonster = null;
+
+
     public Cell() {
         setWidthHeight(9, 4);
     };
@@ -37,23 +41,60 @@ public abstract class Cell extends CMLWidget{
 
     public abstract String toString();
 
-    public void slot1Leave(Hero h) {
-        slot1 = "  ";
+    public void arrive(Characters c, int id, boolean isHero) {
+        String slotTmp;
+
+        if (isHero) {
+            slotTmp = "H" + (id+1);
+            theHero = (Hero)c;
+        }
+        else {
+            slotTmp = "M" + (id+1);
+            theMonster = (Monster)c;
+        }
+
+        if (slot1.equals("  ")) {
+            slot1 = slotTmp;
+        }
+        else {
+            slot2 = slotTmp;
+        }
     }
 
-    public void slot2Leave(Hero h) {
-        slot2 = "  ";
-    }   
-    
-    /*
-     *@param  i the index of this arriving hero
-     * use hero's index as his/hers serial number
-     */
-    public void slot1Arrive(int i, Hero h) {
-        slot1 = "H" + (i+1);
+    public void leave(Characters c, int id, boolean isHero) {
+        if (isHero) {
+            theHero = null;
+            if (slot1.equals("H" + (id+1))) {
+                slot1 = "  ";
+            }
+            else {
+                slot2 = "  ";
+            }
+        }
+        else {
+            theMonster = null;
+            if (slot1.equals("M" + (id+1))) {
+                slot1 = "  ";
+            }
+            else {
+                slot2 = "  ";
+            }
+        }
     }
 
-    public void slot2Arrive(int i, Hero h) {
-        slot2 = "H" + (i+1);
-    }   
+    public boolean hasHero() {
+        return theHero != null;
+    }
+
+    public boolean hasMonster() {
+        return theMonster != null;
+    }
+
+    public Hero getHero() {
+        return theHero;
+    }
+
+    public Monster getMonster() {
+        return theMonster;
+    }
 }

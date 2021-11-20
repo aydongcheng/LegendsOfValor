@@ -50,7 +50,7 @@ public class Hero extends Characters{
             actualDamage =getHp();
             setHp(getLevel()*100/2);
             setFaint(true);
-            System.out.println("Hero "+ getName() +" is dead");
+            Window.newMessage("Hero "+ getName() +" is dead");
         }
         else
             setHp(getHp()-actualDamage);

@@ -34,6 +34,10 @@ public class HeroTeam extends Team{
     public void displayHerosName(){
         System.out.print(Displayer.listDisplay(heroes,"Heroes",0));
     }
+
+    public String displayHerosNameString(){
+        return Displayer.listDisplay(heroes,"Heroes",0).trim();
+    }
     
     public void updateHighest() {
     	for(Hero h : heroes) {

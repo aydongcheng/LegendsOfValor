@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 //the tool class to display infos
 public class Displayer {
@@ -74,29 +73,15 @@ public class Displayer {
 
     //ask the client to choose the one of the item in the list
     public static int chooseList(int listSize){
-        while (true) {
-            System.out.println("Please make your choice:(input the number in front of the item)");
-            String input = Displayer.scan.next();
-            int choice;
-            try {
-                choice = Integer.parseInt(input);
-            } catch (NumberFormatException e) {
-                System.out.println("Sorry, your input is illegal! Please try again.");
-                continue;
-            }
-            if (choice < 0 || choice > listSize-1)
-                System.out.println("Sorry, your input is illegal! Please try again.");
-            else
-                return choice;
-        }
+        Window.newMessage("Please make your choice:(input the number in front of the item)");
+        int choice = Utils.safeIntInput("Input: ", 0, listSize - 1);
+        return choice;
     }
 
     //display the lines
     public static void displayLines(ArrayList<StringBuilder> attributes){
         for(StringBuilder stringBuilder: attributes){
-            System.out.println(stringBuilder);
+            Window.newMessage(stringBuilder.toString());
         }
     }
-
-    private static Scanner scan = new Scanner(System.in);
 }

@@ -15,6 +15,10 @@ public class LogViewWidget extends CMLWidget {
     }
 
     public void newMessage(String message) {
+        if (message.equals("__clear__")) {
+            messages.clear();
+            return;
+        }
         messages.add(message);
         if (messages.size() > widgetHeight - 2) {
             messages.remove(0);

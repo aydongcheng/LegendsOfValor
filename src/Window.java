@@ -7,6 +7,8 @@ public abstract class Window extends CMLWidget{
     private static LogViewWidget logViewWidget = new LogViewWidget(92, 15);
     private static int logCounter = 0;
 
+    private static Window previousWindow;
+
     public Window() {
         setWidthHeight(74 + 20, 37 + 17);
         canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
@@ -16,15 +18,28 @@ public abstract class Window extends CMLWidget{
         subWidgets.add(logViewWidget);
     };
 
-    public void newMessage(String message) {
-        if (logCounter <= 9) {
-            logViewWidget.newMessage(" [" + logCounter + "]: " + message);
+    public static void show() {
+        if (previousWindow != null) {
+            System.out.print(previousWindow);
         }
-        else {
-            logViewWidget.newMessage("[" + logCounter + "]: " + message);
+    }
+
+    public static void newMessage(String message) {
+        if (message.equals("__clear__")) {
+            logViewWidget.newMessage("__clear__");
+            return;
         }
 
-        logCounter += 1;
+        String[] splitted = message.split("\n");
+        for (int idx = 0; idx < splitted.length; idx++) {
+            if (logCounter <= 9) {
+                logViewWidget.newMessage(" [" + logCounter + "]: " + splitted[idx]);
+            }
+            else {
+                logViewWidget.newMessage("[" + logCounter + "]: " + splitted[idx]);
+            }
+            logCounter += 1;
+        }
     }
 
     public void addSubWidget(CMLWidget subWidget){
@@ -32,6 +47,7 @@ public abstract class Window extends CMLWidget{
     }
 
     public String toString() {
+        previousWindow = this;
         return canvas.toString();
     }
 }

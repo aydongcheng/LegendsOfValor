@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 //the entity of game monster and hero
 public class ValorGame extends RPGGame{
-    private LVBoard mahBoard;
+    private LVBoard lvBoard;
     //private Team team;
     private Scanner scan;
 
@@ -15,33 +15,54 @@ public class ValorGame extends RPGGame{
     public ValorGame(){
        scan = new Scanner(System.in);
        //TODO change class name
-       mahBoard = new LVBoard(8);
        hTeam = new HeroTeam();
        mTeam = new MonsterTeam();
     }
 
     //game start
     public void start(){
+        // ----- //
+        // Welcome
+        // ----- //
     	Window welcomeWindow = new WelcomeWindow();
-    	welcomeWindow.newMessage("Welcome to Legends of Valor!");
-        System.out.println(welcomeWindow);
+        Window.newMessage("----------------------------");
+    	Window.newMessage("Welcome to Legends of Valor!");
+        Window.newMessage("----------------------------");
+        Window.newMessage("Press Enter to start: ");  // Press Enter to start
+        System.out.print(welcomeWindow);
+        // Press Enter to start
         scan.nextLine();
+
+        // ----- //
     	//pick hero phase, choose 3
+        // ----- //
         chooseHero();
-        Window combatWindow = new CombatWindow();
-
         //TODO A method to print info of two teams & put messages into log
-        System.out.print("You have built a Team of ");
-        hTeam.displayHerosName();
-        mTeam.displayMonstersName();
+        Window.newMessage("__clear__");
+        Window.newMessage("You have built a Team of:");
+        Window.newMessage(hTeam.displayHerosNameString());
+        Window.newMessage(mTeam.displayMonstersNameString());
 
-		//start
-        LVBoard theBoard = ((CombatWindow)combatWindow).getTheBoard();
-        //initiate hero location
+        // ----- //
+        // Start
+        // ----- //
+        Window combatWindow = new CombatWindow();
+        lvBoard = ((CombatWindow)combatWindow).getTheBoard();
+
+        //initialize heroes' locations
         for(int i=0,j=0; i<=8; i+=3,j++) {
-            theBoard.cells[7][i].slot1Arrive(j);
-            hTeam.getHeroes().get(j).move(7, i);
+            Hero heroTmp = hTeam.getHeroes().get(j);
+            lvBoard.cells[7][i].arrive(heroTmp, j, true);
+            heroTmp.move(7, i);
         }
+
+        // initialize monsters' locations
+        for(int i=0,j=0; i<=8; i+=3,j++) {
+            Monster monsterTmp = mTeam.getMonsters().get(j);
+            lvBoard.cells[0][i].arrive(monsterTmp, j, false);
+            monsterTmp.move(0, i);
+        }
+
 		//round start
 			//turn start, iterate the arrayList of heroes
 			//hero 1 move
@@ -57,276 +78,294 @@ public class ValorGame extends RPGGame{
         while (roundCounter<6) {
             //display the map
         	roundCounter++;
-        	System.out.printf("This is round %d, Hero Action Phase:\n", roundCounter);
-            System.out.println(combatWindow);
-            for(Hero h : hTeam.getHeroes()) {
-	            chooseAction(h, theBoard, (CombatWindow)combatWindow);
 
-	            /* previous engagement check
-	            if(action.equals("move")){
-	                //move to a market cell
-	                if(mahBoard.getCells()[h.getRow()][h.getColumn()] instanceof MarketCell){
-	                    System.out.println("WELCOME TO MARKET!!!");
-	                    Market market = ((MarketCell)mahBoard.getCells()[team.getRow()][team.getColumn()]).getMarket();
-	                    //trade
-	                    trade(market);
-	                }
-	                //move to common cell
-	                else {
-	                    //whether meet monsters
-	                    if(((CommenCell)mahBoard.getCells()[team.getRow()][team.getColumn()]).isMonster()){
-	                        System.out.println("HERO MEET MONSTERS!!!");
-	                        fightManager = new FightManager(team);
-	                        fightManager.start();
-	                    }
-	                    else
-	                        System.out.println("LUCKY!!! NO MONSTERS!!!");
-	                }
-	            }
-	            */
+        	Window.newMessage("This is round" + roundCounter + ", Hero Action Phase:");
+            for(Hero h : hTeam.getHeroes()) {
+                Window.newMessage("This is " + h.getName() + "'s turn");
+	            chooseAction(h, (CombatWindow)combatWindow);
             }
-            System.out.println("Hero Phase end. Monster Action Phase:");
+
+            Window.newMessage("Hero Phase end. Monster Action Phase:");
+            Window.show();
+
             for(Monster m : mTeam.getMonsters()) {
-            	//if no target in range, then move forward:
-            	if(false) {
-            		continue;
+                // if no target in range, then move forward:
+                ArrayList<Characters> targetList = getTargetList(m.getRow(), m.getColumn(), "hero");
+            	if (targetList.size() != 0) {
+            		// select target
+                    int randomID = (int)Math.ceil(Math.random() * targetList.size());
+                    Hero targetHero = (Hero)targetList.get(randomID);
+
+                    // attack
+
+
             	}
             	else {
-            		m.setRow(m.getRow()+1);
+                    // move
+                    int rowCurrent = m.getRow();
+                    int colCurrent = m.getColumn();
+                    int rowNext = rowCurrent + 1;
+                    int colNext = colCurrent;
+                    if (checkMove(rowNext, colNext, "monster")) {
+                        int id = mTeam.getMonsters().indexOf(m);
+                        lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
+                        m.move(rowNext, colNext);
+                        lvBoard.cells[rowNext][colNext].arrive(m, id, false);
+                        // m.setRow(m.getRow()+1);
+                    }
+                    // else, do nothing
             	}
             }
-        	System.out.printf("End of round %d!\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n", roundCounter);
-
-            Displayer.listDisplay(hTeam.getHeroes(),"Heroes",0);
+        	Window.newMessage("End of round " + roundCounter + "!\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n");
+            Window.newMessage(Displayer.listDisplay(hTeam.getHeroes(),"Heroes",0));
+            Window.show();
         }
 
+    }
+
+    // find target of type targetType in a 3x3 grid around row and col.
+    private ArrayList<Characters> getTargetList(int row, int col, String targetType) {
+        ArrayList<Characters> targetList = new ArrayList<Characters>();
+        for (int idx_1 = 0; idx_1 < 3; idx_1++) {
+            for (int idx_2 = 0; idx_2 < 3; idx_2++) {
+                int rowTmp = row - 1 + idx_1;
+                int colTmp = row - 1 + idx_2;
+
+                boolean cond1 = (rowTmp >=0) && (rowTmp <= 7);
+                boolean cond2 = (colTmp >=0) && (colTmp <= 7);
+                if (!(cond1 && cond2)) {
+                    continue;
+                }
+
+                Cell cellTmp = lvBoard.cells[rowTmp][colTmp];
+
+                if (targetType == "hero") {
+                    if (!cellTmp.hasHero()) {
+                        continue;
+                    }
+                    targetList.add(cellTmp.getHero());
+                }
+
+                if (targetType == "monster") {
+                    if (!cellTmp.hasMonster()) {
+                        continue;
+                    }
+                    targetList.add(cellTmp.getMonster());
+                }
+            }
+        }
+        return targetList;
     }
 
 
     //choose the action for each of heroes
-    private void chooseAction(Hero h, LVBoard b, CombatWindow c){
-    	System.out.printf("This is %s' turn, ", h.getName());
-        System.out.println("please choose an action from below:\n"
-        		+ "1. Move\n"
-        		+ "2. Check Hero Info\n"
-        		+ "3. Buy\n"
-        		+ "4. Check Map\n"
-        		+ "5. Attack\n"
-        		+ "6. Cast Spell\n"
-        		+ "7. Teleport\n"
-        		+ "8. Back to Nexus\n"
-        		+ "9. End Turn\n"
-        		+ "0. Quit Game");
-        int input = Tools.intScanner(0,9);
-        switch(input) {
-        case 1:
-            System.out.println("Please choose your direction:");
-            char direction = Tools.charScanner("wasd");
-            if(direction == 'w'){
-                if(checkMove(h.getRow()-1, h.getColumn(), b)){
-                	//check slot availability
-                	if (b.cells[h.getRow()-1][h.getColumn()].slot1.trim().isEmpty()) {
-                		//arrive, leave
-                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-	                    h.move(h.getRow()-1, h.getColumn());
-                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
-                    	//update highest record
-	                    hTeam.updateHighest();
-	                    break;
-                    }
-                    else if(b.cells[h.getRow()-1][h.getColumn()].slot2.trim().isEmpty()) {
-                		//arrive, leave
-                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-	                    h.move(h.getRow()-1, h.getColumn());
-                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
-	                    hTeam.updateHighest();
-	                    break;
-                    }
-                    else {
-                    	System.out.println("The slots of this cell are full. Please try again.");
-                    }
-                }
-                else
-                    System.out.println("The place is inaccessible. Please try again.");
-            }
-            else if(direction == 's'){
-                if(checkMove(h.getRow()+1, h.getColumn(), b)){
-                	//check slot availability
-                	if (b.cells[h.getRow()+1][h.getColumn()].slot1.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-	                    h.move(h.getRow()+1, h.getColumn());
-                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
-                        break;
-                    }
-                    else if(b.cells[h.getRow()+1][h.getColumn()].slot2.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-	                    h.move(h.getRow()+1, h.getColumn());
-                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
-                        break;
-                    }
-                    else {
-                    	System.out.println("The slots of this cell are full. Please try again.");
-                    }
-                }
-                else
-                    System.out.println("The place is inaccessible. Please try again.");
-            }
-            else if(direction == 'a'){
-                if(checkMove(h.getRow(), h.getColumn()-1, b)){
-                	//check slot availability
-                	if (b.cells[h.getRow()][h.getColumn()-1].slot1.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-	                    h.move(h.getRow(), h.getColumn()-1);
-                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
-                        break;
-                    }
-                    else if(b.cells[h.getRow()][h.getColumn()-1].slot2.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-	                    h.move(h.getRow(), h.getColumn()-1);
-                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
-                        break;
-                    }
-                    else {
-                    	System.out.println("The slots of this cell are full. Please try again.");
-                    }
-                }
-                else
-                    System.out.println("The place is inaccessible. Please try again.");
-            }
-            else if(direction == 'd'){
-                if(checkMove(h.getRow(), h.getColumn()+1, b)){
-                	//check slot availability
-                	if (b.cells[h.getRow()][h.getColumn()+1].slot1.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-	                    h.move(h.getRow(), h.getColumn()+1);
-                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
-                        break;
-                    }
-                    else if(b.cells[h.getRow()][h.getColumn()+1].slot2.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-	                    h.move(h.getRow(), h.getColumn()+1);
-                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
-                        break;
-                    }
-                    else {
-                    	System.out.println("The slots of this cell are full. Please try again.");
-                    }
-                }
-                else
-                    System.out.println("The place is inaccessible. Please try again.");
-            }
-            chooseAction(h, b, c);
-        	break;
+    private void chooseAction(Hero h, CombatWindow c){
+        int id = hTeam.getHeroes().indexOf(h);
+        int rowCurrent = h.getRow();
+        int colCurrent = h.getColumn();
 
-        //check info
-        case 2:
-            checkInfo(h);
-            chooseAction(h, b, c);
-        	break;
-        //buy
-        case 3:
-        	//new market
-            if(mahBoard.getCells()[h.getRow()][h.getColumn()] instanceof NexusCell) {
-                //trade
-                trade(h);
-                chooseAction(h, b, c);
-            }
-            else{
-            	System.out.println("You are not in nexus, you cannot buy anything!");
-                chooseAction(h, b, c);
-            }
-        	break;
-        //print map
-        case 4:
-        	System.out.println(c);
-            chooseAction(h, b, c);
-        	break;
-        //Attack
-        case 5:
-
-        	break;
-        //Cast spell
-        case 6:
-
-        	break;
-        //Teleport
-        case 7:
-            System.out.println("You are teleporting to:");
-            System.out.println("Row:");
-            int row = Tools.intScanner(1,8)-1;
-            System.out.println("Column:");
-            int column = Tools.intScanner(1,8)-1;
-            //TODO check monster
-            if(!checkMove(row, column, b)){
-                System.out.println("The place is inaccessible.");
-                chooseAction(h, b, c);
-            }
-            else {
-            	//check highest
-            	if(row>=hTeam.getHighest()) {
-                	//check slot availability
-                	if (b.cells[row][column].slot1.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-                        h.move(row, column);
-                    	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
+        outerLoop:
+        while (true) {
+            System.out.print(c);
+            int input = Utils.safeIntInput("Input: ", 0, 9);
+            switch(input) {
+                case 1:
+                    Window.newMessage("Please choose your direction:");
+                    Window.show();
+                    char[] allowedChars = {'w', 'a', 's', 'd'};
+                    char direction = Utils.safeCharInput("Input: ", allowedChars);
+    
+                    int rowNext = 0;
+                    int colNext = 0;
+                    if (direction == 'w'){
+                        rowNext = h.getRow() - 1;
+                        colNext = h.getColumn();
                     }
-                    else if(b.cells[row][column].slot2.trim().isEmpty()) {
-                    	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-                        h.move(row, column);
-                    	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
+                    if (direction == 'a'){
+                        rowNext = h.getRow();
+                        colNext = h.getColumn() - 1;
                     }
-                	else {
-                    	System.out.println("The slots of this cell are full. Please try again.");
-                        chooseAction(h, b, c);
-                	}
-            	}
-            	else {
-            		System.out.println("This hero can't teleport to a location higher than previous highest record");
-                    chooseAction(h, b, c);
-            	}
+                    if (direction == 's'){
+                        rowNext = h.getRow() + 1;
+                        colNext = h.getColumn();
+                    }
+                    if (direction == 'd'){
+                        rowNext = h.getRow();
+                        colNext = h.getColumn() + 1;
+                    }
+    
+                    if (checkMove(rowNext, colNext, "hero")) {
+                        //arrive, leave
+                        lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
+                        h.move(rowNext, colNext);
+                        lvBoard.cells[rowNext][colNext].arrive(h, id, true);
+                        //update highest record
+                        hTeam.updateHighest();
+                        break outerLoop;
+                    }
+                    Window.newMessage("You cannot go there!");
+                    break;
+    
+                //check info
+                case 2:
+                    checkInfo(h);
+                    break;
+                
+                //buy
+                case 3:
+                    //new market
+                    if(lvBoard.getCells()[h.getRow()][h.getColumn()] instanceof NexusCell) {
+                        //trade
+                        trade(h);
+                    }
+                    else{
+                        Window.newMessage("You are not in nexus, you cannot buy anything!");
+                    }
+                    break;
+
+                //Attack
+                case 4:
+                    ArrayList<Characters> targetListAttack = getTargetList(rowCurrent, colCurrent, "monster");
+                    if (targetListAttack.size() == 0) {
+                        Window.newMessage("No visible target!");
+                        break;
+                    }
+                    
+                    // select target
+                    Window.newMessage("Please select a target:");
+                    for (int idx = 0; idx < targetListAttack.size(); idx++) {
+                        Window.newMessage("Target #" + idx + " - " + targetListAttack.get(idx).getName());
+                    }
+                    Monster targetTmpAttack = (Monster)targetListAttack.get(Utils.safeIntInput("Input: ", 0, targetListAttack.size() - 1));
+
+                    // perform attack
+                    targetTmpAttack.getHurt(h.attack());
+                    Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpAttack.getName());
+
+                    //another method for monster attack, since m.attack() differ from h.attack()
+                    break outerLoop;
+
+                //Cast spell
+                case 5:
+                    ArrayList<Characters> targetListSpell = getTargetList(rowCurrent, colCurrent, "monster");
+                    if (targetListSpell.size() == 0) {
+                        Window.newMessage("No visible target!");
+                        break;
+                    }
+                    
+                    // select target
+                    Window.newMessage("Please select a target:");
+                    for (int idx = 0; idx < targetListSpell.size(); idx++) {
+                        Window.newMessage("Target #" + idx + " - " + targetListSpell.get(idx).getName());
+                    }
+                    Monster targetTmpSpell = (Monster)targetListSpell.get(Utils.safeIntInput("Input: ", 0, targetListSpell.size() - 1));
+
+                    // perform spell
+                    targetTmpSpell.getHurt(h.attack());
+                    Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpSpell.getName());
+
+                    //another method for monster attack, since m.attack() differ from h.attack()
+                    break outerLoop;
+
+                //Teleport
+                case 6:
+                    Window.newMessage("You are teleporting to:");
+                    Window.newMessage("Row:");
+                    int row = Utils.safeIntInput("Input: ", 1, 8) - 1;
+                    Window.newMessage("Column:");
+                    int column = Utils.safeIntInput("Input: ", 1, 8) - 1;
+    
+                    //TODO check monster
+                    
+                    if(!checkMove(row, column, "hero")){
+                        Window.newMessage("The place is inaccessible.");
+                        chooseAction(h, c);
+                    }
+                    else {
+                        //check highest
+                        if(row>=hTeam.getHighest()) {
+                            //check slot availability
+                            if (lvBoard.cells[row][column].slot1.trim().isEmpty()) {
+                                lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
+                                h.move(row, column);
+                                lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
+                            }
+                            else if(lvBoard.cells[row][column].slot2.trim().isEmpty()) {
+                                lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
+                                h.move(row, column);
+                                lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
+                            }
+                            else {
+                                Window.newMessage("The slots of this cell are full. Please try again.");
+                                chooseAction(h, c);
+                            }
+                        }
+                        else {
+                            Window.newMessage("This hero can't teleport to a location higher than previous highest record");
+                            chooseAction(h, c);
+                        }
+                    }
+                    break;
+
+                //Back to Nexus
+                case 7:
+                    if (lvBoard.cells[7][h.getColumn()].slot1.trim().isEmpty()) {
+                        lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
+                        h.move(7, h.getColumn());
+                        lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
+                    }
+                    else if(lvBoard.cells[7][h.getColumn()].slot2.trim().isEmpty()) {
+                        lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
+                        h.move(7, h.getColumn());
+                        lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
+                    }
+                    else {
+                        Window.newMessage("The slots of this cell are full. Please try again.");
+                        chooseAction(h, c);
+                    }
+                    break;
+
+                //End turn
+                case 8:
+                    break outerLoop;
+
+                //Quit
+                case 9:
+                    quitGame();
+                    break;
             }
-        	break;
-        //Back to Nexus
-        case 8:
-        	if (b.cells[7][h.getColumn()].slot1.trim().isEmpty()) {
-            	b.cells[h.getRow()][h.getColumn()].slot1Leave();
-                h.move(7, h.getColumn());
-            	b.cells[h.getRow()][h.getColumn()].slot1Arrive(hTeam.getHeroes().indexOf(h));
-            }
-            else if(b.cells[7][h.getColumn()].slot2.trim().isEmpty()) {
-            	b.cells[h.getRow()][h.getColumn()].slot2Leave();
-                h.move(7, h.getColumn());
-            	b.cells[h.getRow()][h.getColumn()].slot2Arrive(hTeam.getHeroes().indexOf(h));
-            }
-        	else {
-            	System.out.println("The slots of this cell are full. Please try again.");
-                chooseAction(h, b, c);
-        	}
-        	break;
-        //End turn
-        case 9:
-        	break;
-        //Quit
-        case 0:
-            System.out.println("Quit game.");
-            System.exit(0);
-        	break;
 
         }
-    	System.out.printf("%s' turn ends.\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n", h.getName());
+
+    	Window.newMessage(h.getName() + "'s turn ends.\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n");
     }
 
-    //check whether the new cell is accessible
-    private boolean checkMove(int row, int column, LVBoard b){
-    	//check map resitriction,
-    	boolean bo= b.cells[row][column].isAccessible();
-    	System.out.printf("row%d, column%d, %b", row, column, bo);
-        if(row>=0 && column>=0 && b.cells[row][column].isAccessible() && row<=7 && column <=7 )
-	        //TODO check monster
-            return true;
+    // check whether the new cell is accessible
+    // (inaccessible cell, or a cell that has a character of the same type)
+    private boolean checkMove(int row, int column, String subjectType){
+    	boolean cond1 = (row >=0) && (row <= 7);
+        boolean cond2 = (column >=0) && (column <= 7);
+        if (!(cond1 && cond2)) {
+            return false;
+        }
 
-        else
-        	return false;
+    	if (!lvBoard.cells[row][column].isAccessible()) {
+            return false;
+        }
+
+        if (subjectType == "hero") {
+            if (lvBoard.cells[row][column].hasHero()) {
+                return false;
+            }
+        }
+
+        if (subjectType == "monster") {
+            if (lvBoard.cells[row][column].hasMonster()) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     private void trade(Hero hero){
@@ -348,7 +387,7 @@ public class ValorGame extends RPGGame{
 
             marketAndSellWindow.addSubWidget(inventoryInfoWindow);
 
-            System.out.println(marketAndSellWindow);
+            System.out.print(marketAndSellWindow);
             int totalNum = market.getTotalItemsNum();
 
             char input = Utils.safeCharInput("Input",new char[]{'b','s','e'});
@@ -356,39 +395,39 @@ public class ValorGame extends RPGGame{
                 case 'b':
                     int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
                     Merchandise merchandise = market.getItem(index);
-                    marketAndSellWindow.newMessage(merchandise.getDisplayLines().toString());
-                    System.out.println(marketAndSellWindow);
-                    System.out.println("Are you sure to buy this merchandise?(y/others)");
+                    Window.newMessage(merchandise.getDisplayLines().toString());
+                    System.out.print(marketAndSellWindow);
+                    Window.newMessage("Are you sure to buy this merchandise?(y/others)");
                     String check= scan.next();
                     if(check.equals("y")) {
                         if (!hero.buyMerchandise(merchandise))
-                            marketAndSellWindow.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
+                        Window.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
                         else
-                            marketAndSellWindow.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
+                        Window.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
                     }
                     break;
                 case 's':
                     int NumEquipInInventory = hero.getInventory().getTotalItemsNum();
                     if(NumEquipInInventory == 0) {
-                        marketAndSellWindow.newMessage("Sorry, you don't have any merchandise.");
-                        System.out.println(marketAndSellWindow);
+                        Window.newMessage("Sorry, you don't have any merchandise.");
+                        System.out.print(marketAndSellWindow);
                         break;
                     }
                     int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to sell:",0,
                             NumEquipInInventory-1);
                     merchandise = hero.getInventory().getItem(indexOfEquipment);
                     //print Merchandise attributes by line
-                    marketAndSellWindow.newMessage("-----Merchandise's Info-----");
+                    Window.newMessage("-----Merchandise's Info-----");
                     String merInfo = merchandise.getDisplayLines().toString();
                     for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
-                        marketAndSellWindow.newMessage(s);
+                        Window.newMessage(s);
                     }
-                    System.out.println(marketAndSellWindow);
-                    System.out.println("Are you sure to sell this merchandise?(y/others)");
+                    System.out.print(marketAndSellWindow);
+                    Window.newMessage("Are you sure to sell this merchandise?(y/others)");
                     check = scan.next();
                     if(check.equals("y")) {
                         hero.sellMerchandise(merchandise);
-                        marketAndSellWindow.newMessage("Hero " + hero.getName() + " sold " + merchandise.getName());
+                        Window.newMessage("Hero " + hero.getName() + " sold " + merchandise.getName());
                     }
                     break;
                 case 'e':
@@ -427,21 +466,21 @@ public class ValorGame extends RPGGame{
                 case 'u':
                     int NumEquipInInventory = h.getInventory().getTotalItemsNum();
                     if(NumEquipInInventory == 0) {
-                        heroStatusWindow.newMessage("Sorry, you don't have any merchandise.");
-                        System.out.println(heroStatusWindow);
+                        Window.newMessage("Sorry, you don't have any merchandise.");
+                        System.out.print(heroStatusWindow);
                         break;
                     }
                     int indexOfEquipment = Utils.safeIntInput("Please select the merchandise to equip or use:",0,
                             NumEquipInInventory-1);
                     Merchandise merchandise = h.getInventory().getItem(indexOfEquipment);
                     //print Merchandise attributes by line
-                    heroStatusWindow.newMessage("-----Merchandise's Info-----");
+                    Window.newMessage("-----Merchandise's Info-----");
                     String merInfo = merchandise.getDisplayLines().toString();
                     for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
-                        heroStatusWindow.newMessage(s);
+                        Window.newMessage(s);
                     }
-                    System.out.println(heroStatusWindow);
-                    System.out.println("Are you sure to equip or use this merchandise?(y/others)");
+                    System.out.print(heroStatusWindow);
+                    Window.newMessage("Are you sure to equip or use this merchandise?(y/others)");
                     String check = scan.next();
                     if(check.equals("y")) {
                         h.equipOrUseMerchandise(merchandise);
@@ -456,7 +495,7 @@ public class ValorGame extends RPGGame{
     }
 
     //choose hero to join the team
-    public void chooseHero(){
+    public void chooseHero() {
     	//scan hero files from config
     	ArrayList<Hero> heroesList = new ArrayList<>();
         String[] files = new String[]{"Warriors", "Sorcerers", "Paladins"};
@@ -481,38 +520,48 @@ public class ValorGame extends RPGGame{
 
         chooseHeroWindow.addSubWidget(heroDetailsWindow);
         //the required number of heroes in one team is 3
-        chooseHeroWindow.newMessage("First of all, let's build a team of 3 heroes:");
+        Window.newMessage("First of all, let's build a team of 3 heroes:");
         int HeroNum = 3;
         for(int i=0; i<HeroNum; i++){
         	if(i!=0) {
-        		chooseHeroWindow.newMessage("Please select another hero you are interested in");
+        		Window.newMessage("Please select another hero you are interested in");
         	}
         	else {
-            	chooseHeroWindow.newMessage("Please select a hero you are interested in.(input the number in front of the item)");
+            	Window.newMessage("Please select a hero you are interested in.");
+                Window.newMessage("Input the number in front of the name.");
         	}
             System.out.print(chooseHeroWindow);
-            int index = Tools.intScannerInWindow(0, heroesList.size(), chooseHeroWindow);
+            int index = Utils.safeIntInput("Input: ", 0, heroesList.size());
             if(hTeam.getHeroes().contains(heroesList.get(index))) {
-            	chooseHeroWindow.newMessage("Hero " + heroesList.get(index).getName() +
+            	Window.newMessage("Hero " + heroesList.get(index).getName() +
                         " is already in the team, please select other heroes.");
                 System.out.print(chooseHeroWindow);
                 i--;
             }
             else {
             	//print hero attributes by line
-                chooseHeroWindow.newMessage("-----Hero's Info-----");
+                Window.newMessage("-----Hero's Info-----");
             	String heroString = heroesList.get(index).getDisplayLines().toString();
             	for(String s : heroString.substring(1, heroString.length() - 1).split(", ")) {
-                    chooseHeroWindow.newMessage(s);
+                    Window.newMessage(s);
             	}
-            	chooseHeroWindow.newMessage("Do you want hero "+ heroesList.get(index).getName() + " to join your team?(y/others)");
+            	Window.newMessage("Do you want hero "+ heroesList.get(index).getName() + " to join your team?(y/n)");
                 System.out.print(chooseHeroWindow);
-                String input = scan.next();
-                if(input.equals("y"))
+
+                char[] allowedChars = {'y', 'n'};
+                char userCharInput = Utils.safeCharInput("Input: ", allowedChars);
+                if(userCharInput == 'y')
                 	hTeam.addHero(heroesList.get(index));
                 else
                     i--;
             }
         }
+    }
+
+
+    private void quitGame() {
+        Window exitWindow = new ExitWindow();
+        System.out.print(exitWindow);
+        System.exit(0);
     }
 }

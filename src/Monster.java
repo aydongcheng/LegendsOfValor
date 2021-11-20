@@ -50,7 +50,7 @@ public class Monster extends Characters{
             actualDamage = getHp();
             setFaint(true);
             setHp(0);
-            System.out.println("Monster "+ getName() +" is dead");
+            Window.newMessage("Monster "+ getName() +" is dead");
         }
         else
             setHp(getHp()-actualDamage);

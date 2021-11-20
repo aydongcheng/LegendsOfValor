@@ -7,18 +7,23 @@ public class Utils {
     // Foolproof integer input
     public static int safeIntInput(String message, int min, int max) {
         int int_tmp;
-
+        
         while (true) {
-            System.out.println(message);
+            Window.newMessage(message);
+            Window.show();
             String str_tmp = scan.next();
+            Window.newMessage(str_tmp);
+            Window.show();
             try {
                 int_tmp = Integer.parseInt(str_tmp);
                 if ((int_tmp >= min) && (int_tmp <= max)) {
                     break;
                 }
-                System.out.println("Not within range [" + min + ", " + max + "]!");
+                Window.newMessage("Not within range [" + min + ", " + max + "]!");
+                Window.show();
               } catch(NumberFormatException e) {
-                System.out.println("Not an integer!");
+                Window.newMessage("Not an integer!");
+                Window.show();
             } 
         }
         return int_tmp;
@@ -29,16 +34,21 @@ public class Utils {
         double double_tmp;
 
         while (true) {
-            System.out.println(message);
+            Window.newMessage(message);
+            Window.show();
             String str_tmp = scan.next();
+            Window.newMessage(str_tmp);
+            Window.show();
             try {
                 double_tmp = Double.parseDouble(str_tmp);
                 if ((double_tmp >= min) && (double_tmp <= max)) {
                     break;
                 }
-                System.out.println("Not within range [" + min + ", " + max + "]!");
+                Window.newMessage("Not within range [" + min + ", " + max + "]!");
+                Window.show();
               } catch(NumberFormatException e) {
-                System.out.println("Not a number!");
+                Window.newMessage("Not a number!");
+                Window.show();
             } 
         }
         return double_tmp;
@@ -49,10 +59,14 @@ public class Utils {
         char char_tmp;
 
         while (true) {
-            System.out.println(message);
+            Window.newMessage(message);
+            Window.show();
             String str_tmp = scan.next();
+            Window.newMessage(str_tmp);
+            Window.show();
             if (str_tmp.length() != 1) {
-                System.out.println("Please input one character!");
+                Window.newMessage("Please input one character!");
+                Window.show();
                 continue;
             }
             char_tmp = str_tmp.charAt(0);
@@ -61,7 +75,8 @@ public class Utils {
                     return char_tmp;
                 }
             }
-            System.out.println("Illegal input!");
+            Window.newMessage("Illegal input!");
+            Window.show();
         }
     }    
 

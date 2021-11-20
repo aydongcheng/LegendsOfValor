@@ -10,15 +10,16 @@ public class CombatWindow extends Window {
                              "  |  Manual  |",
                              "  +----------+",
                              "----------------",
-                             "Manual",
-                             "Manual",
-                             "Manual",
-                             "Manual",
-                             "Manual",
-                             "Manual",
-                             "Manual",
-                             "Manual",
-                             "Manual",};
+                             "Please choose:",
+                             "1. Move",
+                             "2. Hero Info",
+                             "3. Buy",
+                             "4. Attack",
+                             "5. Cast Spell",
+                             "6. Teleport",
+                             "7. Back to Nexus",
+                             "8. End Turn",
+                             "9. Quit Game"};
         TextWidget textWidget = new TextWidget(18, 37, messages);
         textWidget.setPosition(1, 75);
         subWidgets.add(textWidget);        

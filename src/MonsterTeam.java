@@ -1,15 +1,12 @@
 import java.util.ArrayList;
-import java.util.Scanner;
 
 public class MonsterTeam extends Team{
 
     private ArrayList<Monster> Monsters;
-    private Scanner scan;
     //win check
-    private String teamStatus;
+    // private String teamStatus;
     
     public MonsterTeam () {
-        scan = new Scanner(System.in);
         Monsters = new ArrayList<>();
         
         //TODO better build monster team method
@@ -36,5 +33,9 @@ public class MonsterTeam extends Team{
     //display the name of heroes in the team
     public void displayMonstersName(){
         System.out.print(Displayer.listDisplay(Monsters,"Monsters",0));
+    }
+
+    public String displayMonstersNameString(){
+        return Displayer.listDisplay(Monsters,"Monsters",0).trim();
     }
 }

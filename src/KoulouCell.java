@@ -1,26 +1,20 @@
-public class KoulouCell extends SpecialCell{
+public class KoulouCell extends SpecialCell {
+
     @Override
-    public void slot1Arrive(int i, Hero h) {
-        super.slot1Arrive(i, h);
-        h.setStrength((int)Math.ceil(h.getStrength() * 1.1));
+    public void arrive(Characters c, int id, boolean isHero) {
+        super.arrive(c, id, isHero);
+        if (isHero) {
+            theHero.setStrength((int)Math.ceil(theHero.getStrength() * 1.1));
+        }
+        
     }
 
     @Override
-    public void slot2Arrive(int i, Hero h) {
-        super.slot1Arrive(i, h);
-        h.setStrength((int)Math.ceil(h.getStrength() * 1.1));
-    }
-
-    @Override
-    public void slot1Leave(Hero h) {
-        super.slot1Leave(h);
-        h.setStrength((int)Math.ceil(h.getStrength() / 1.1));
-    }
-
-    @Override
-    public void slot2Leave(Hero h) {
-        super.slot2Leave(h);
-        h.setStrength((int)Math.ceil(h.getStrength() / 1.1));
+    public void leave(Characters c, int id, boolean isHero) {
+        if (isHero) {
+            theHero.setStrength((int)Math.ceil(theHero.getStrength() / 1.1));
+        }
+        super.leave(c, id, isHero);
     }
 
     @Override
