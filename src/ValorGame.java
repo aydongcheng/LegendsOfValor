@@ -305,6 +305,7 @@ public class ValorGame extends RPGGame{
                             chooseAction(h, c);
                         }
                     }
+                    
                     break;
 
                 //Back to Nexus
@@ -313,6 +314,7 @@ public class ValorGame extends RPGGame{
                         lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
                         h.move(7, h.getColumn());
                         lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
+
                     }
                     else if(lvBoard.cells[7][h.getColumn()].slot2.trim().isEmpty()) {
                         lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
