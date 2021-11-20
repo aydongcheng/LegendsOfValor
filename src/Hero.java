@@ -48,13 +48,16 @@ public class Hero extends Characters{
             actualDamage = Math.max(damage - ((int) (armor.getDamageReduction()*0.01)), 0);
         if(actualDamage>getHp()){
             actualDamage =getHp();
-            setHp(getLevel()*100/2);
             setFaint(true);
             Window.newMessage("Hero "+ getName() +" is dead");
         }
         else
             setHp(getHp()-actualDamage);
         return actualDamage;
+    }
+
+    public void revive(){
+        setHp(getHp()/2);
     }
 
     //cast a spell, return the spell damage
