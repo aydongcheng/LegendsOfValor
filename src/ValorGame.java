@@ -221,11 +221,6 @@ public class ValorGame extends RPGGame{
                         colNext = h.getColumn() + 1;
                     }
 
-                    if(rowNext == 0) {
-                        Window.newMessage("Heroes Win!!!");
-                        quitGame();
-                    }
-
                     if (checkMove(rowNext, colNext, "hero")) {
                         //arrive, leave
                         lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
