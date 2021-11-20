@@ -59,8 +59,8 @@ public class ValorGame extends RPGGame{
         // initialize monsters' locations
         for(int i=0,j=0; i<=8; i+=3,j++) {
             Monster monsterTmp = mTeam.getMonsters().get(j);
-            lvBoard.cells[0][i].arrive(monsterTmp, j, false);
-            monsterTmp.move(0, i);
+            lvBoard.cells[6][i].arrive(monsterTmp, j, false);
+            monsterTmp.move(6, i);
         }
 
         while (true) {
@@ -100,7 +100,6 @@ public class ValorGame extends RPGGame{
                     Window.newMessage("Monster "+ m.getName() +" cast "+ heroGetHurt + " damage to hero "+ targetHero.getName());
 
                     if(targetHero.isFaint()){
-                        Window.newMessage("Hero "+ targetHero.getName() +" is dead!");
                         lvBoard.cells[targetHero.getRow()][targetHero.getColumn()]
                                 .leave(targetHero, hTeam.getHeroes().indexOf(targetHero), false);
                         targetHero.move(7, targetHero.getColumn());
@@ -204,6 +203,7 @@ public class ValorGame extends RPGGame{
                         if (targetListAttack.size() != 0) {
                             Window.newMessage("A monster is in your way!");
                             break;
+                        }
                         rowNext = h.getRow() - 1;
                         colNext = h.getColumn();
                     }
@@ -227,13 +227,13 @@ public class ValorGame extends RPGGame{
                         lvBoard.cells[rowNext][colNext].arrive(h, id, true);
                         //update highest record
                         hTeam.updateHighest();
+                        if(rowNext == 0) {
+                            Window.newMessage("Heroes Win!!!");
+                            quitGame();
+                        }
                         break outerLoop;
                     }
                     Window.newMessage("You cannot go there!");
-                    if(rowNext == 0) {
-                        Window.newMessage("Heroes Win!!!");
-                        quitGame();
-                    }
                     break;
 
                 //check info
@@ -247,10 +247,10 @@ public class ValorGame extends RPGGame{
                     if(lvBoard.getCells()[h.getRow()][h.getColumn()] instanceof NexusCell) {
                         //trade
                         trade(h);
-            }
+                    }
                     else{
-                Window.newMessage("You are not in nexus, you cannot buy anything!");
-            }
+                        Window.newMessage("You are not in nexus, you cannot buy anything!");
+                    }
                     break;
 
                 //Attack
@@ -268,7 +268,6 @@ public class ValorGame extends RPGGame{
                     Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpAttack.getName());
 
                     if(targetTmpAttack.isFaint()){
-                        Window.newMessage("Monster "+ targetTmpAttack.getName() +" is dead!");
                         lvBoard.cells[targetTmpAttack.getRow()][targetTmpAttack.getColumn()]
                                 .leave(targetTmpAttack, mTeam.getMonsters().indexOf(targetTmpAttack), false);
                         mTeam.getMonsters().remove(targetTmpAttack);
@@ -291,21 +290,20 @@ public class ValorGame extends RPGGame{
                     int heroDamage = h.SpellAttack();
                     if(heroDamage==0){
                         Window.newMessage("Hero can't cast a spell!");
-                        continue;
+                        break;
                     }
                     int monsterGethurt = targetTmpSpell.getHurt(heroDamage);
-                    System.out.println("Hero "+ h.getName() +" cast "+ monsterGethurt + " damage to monster "+ targetTmpSpell.getName());
+                    Window.newMessage("Hero "+ h.getName() +" dealt "+ monsterGethurt + " damage to monster "+ targetTmpSpell.getName());
                     h.getSpell().specialEffect(targetTmpSpell);
-                    System.out.println("Monster "+ targetTmpSpell.getName() + " " + h.getSpell().getSpecil());
+                    Window.newMessage("Monster "+ targetTmpSpell.getName() + " " + h.getSpell().getSpecil());
 
                     if(targetTmpSpell.isFaint()){
-                        Window.newMessage("Monster "+ targetTmpSpell.getName() +" is dead!");
                         lvBoard.cells[targetTmpSpell.getRow()][targetTmpSpell.getColumn()]
                                 .leave(targetTmpSpell, mTeam.getMonsters().indexOf(targetTmpSpell), false);
                         mTeam.getMonsters().remove(targetTmpSpell);
                         h.getRewards(targetTmpSpell.getLevel());
                     }
-
+                    Window.show();
                     break outerLoop;
 
                 //Teleport
@@ -421,15 +419,20 @@ public class ValorGame extends RPGGame{
                 case 'b':
                     int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
                     Merchandise merchandise = market.getItem(index);
-                    Window.newMessage(merchandise.getDisplayLines().toString());
-                    System.out.print(marketAndSellWindow);
+                    //print Merchandise attributes by line
+                    Window.newMessage("-----Merchandise's Info-----");
+                    String merInfo = merchandise.getDisplayLines().toString();
+                    for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
+                        Window.newMessage(s);
+                    }
                     Window.newMessage("Are you sure to buy this merchandise?(y/others)");
+                    System.out.print(marketAndSellWindow);
                     String check= scan.next();
                     if(check.equals("y")) {
                         if (!hero.buyMerchandise(merchandise))
-                        Window.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
+                            Window.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
                         else
-                        Window.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
+                            Window.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
                     }
                     break;
                 case 's':
@@ -444,12 +447,12 @@ public class ValorGame extends RPGGame{
                     merchandise = hero.getInventory().getItem(indexOfEquipment);
                     //print Merchandise attributes by line
                     Window.newMessage("-----Merchandise's Info-----");
-                    String merInfo = merchandise.getDisplayLines().toString();
+                    merInfo = merchandise.getDisplayLines().toString();
                     for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
                         Window.newMessage(s);
                     }
-                    System.out.print(marketAndSellWindow);
                     Window.newMessage("Are you sure to sell this merchandise?(y/others)");
+                    System.out.print(marketAndSellWindow);
                     check = scan.next();
                     if(check.equals("y")) {
                         hero.sellMerchandise(merchandise);
@@ -505,8 +508,8 @@ public class ValorGame extends RPGGame{
                     for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
                         Window.newMessage(s);
                     }
-                    System.out.print(heroStatusWindow);
                     Window.newMessage("Are you sure to equip or use this merchandise?(y/others)");
+                    System.out.print(heroStatusWindow);
                     String check = scan.next();
                     if(check.equals("y")) {
                         h.equipOrUseMerchandise(merchandise);
