@@ -317,6 +317,14 @@ public class Hero extends Characters{
         return getName();
     }
 
+    public static ArrayList<StringBuilder> getGraphicLines(){
+        ArrayList<StringBuilder> lines = new ArrayList<>();
+        for(String s : Hero.graphic.split("\n")){
+            lines.add(new StringBuilder(s));
+        }
+        return lines;
+    }
+
     private int mana;
     private int strength;
     private int agility;
@@ -327,4 +335,17 @@ public class Hero extends Characters{
     private Armor armor;
     private Spell spell;
     private Inventory inventory;
+    private static String graphic =
+            "            -*%@@@@%*-.       \n"+
+            "          :=%@@@@@@@@@@%=     \n"+
+            "      +@@@@@@@@@@@@@@@@@@@@*  \n"+
+            " :#@@@@@@@@@@@@@@@@@@@@@@@@@@:\n"+
+            "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@#\n"+
+            "=@@@@@@#-..-=++*@@@@@@@@@@@@@@\n"+
+            "  -==-.       +@@@@@@@@@@@@@@#\n"+
+            "          :%@@@@@@@@@@@@@@@@% \n"+
+            "        @@@@@@@@@@@@@@@@@@+   \n"+
+            "      =@@@@@@@@@@@@@@@@@@@=:  \n"+
+            "    -#@@@@@@@@@@@@@@@@@@@@@@+ \n"+
+            "    %@@@@@@@@@@@@@@@@@@@@@@@@.\n";
 }

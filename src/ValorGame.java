@@ -476,6 +476,9 @@ public class ValorGame extends RPGGame{
             statusWindow.setPosition(1, 1);
             ArrayList<ArrayList<StringBuilder>> heroInfos = new ArrayList<>();
             heroInfos.add(h.getDisplayLines());
+            heroInfos.add(new ArrayList<StringBuilder>());
+            heroInfos.add(Hero.getGraphicLines());
+
             CardWiget heroInfo = new CardWiget(heroInfos);
             heroInfo.setPosition(1 + 3, 1);
             statusWindow.addSubWidget(heroInfo);
