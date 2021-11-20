@@ -132,7 +132,10 @@ public class ValorGame extends RPGGame{
                         lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
                         m.move(rowNext, colNext);
                         lvBoard.cells[rowNext][colNext].arrive(m, id, false);
-                        // m.setRow(m.getRow()+1);
+                        if(rowNext == 7){
+                            Window.newMessage("Monsters Win!!!");
+                            quitGame();
+                        }
                     }
                     // else, do nothing
             	}
@@ -234,6 +237,10 @@ public class ValorGame extends RPGGame{
                         break outerLoop;
                     }
                     Window.newMessage("You cannot go there!");
+                    if(rowNext == 0) {
+                        Window.newMessage("Heroes Win!!!");
+                        quitGame();
+                    }
                     break;
 
                 //check info
