@@ -57,7 +57,7 @@ public class Hero extends Characters{
     }
 
     public void revive(){
-        setHp(getHp()/2);
+        setHp(50);
     }
 
     //cast a spell, return the spell damage

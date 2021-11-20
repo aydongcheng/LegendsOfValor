@@ -101,7 +101,7 @@ public class ValorGame extends RPGGame{
 
                     if(targetHero.isFaint()){
                         lvBoard.cells[targetHero.getRow()][targetHero.getColumn()]
-                                .leave(targetHero, hTeam.getHeroes().indexOf(targetHero), false);
+                                .leave(targetHero, hTeam.getHeroes().indexOf(targetHero), true);
                         targetHero.move(7, targetHero.getColumn());
                         lvBoard.cells[7][targetHero.getColumn()]
                                 .arrive(targetHero, hTeam.getHeroes().indexOf(targetHero), true);
@@ -125,7 +125,20 @@ public class ValorGame extends RPGGame{
                             quitGame();
                         }
                     }
-                    // else, do nothing
+                    //else, try the other column
+                    else if(checkMove(rowCurrent, colNext+1, "monster")) {
+                    	int id = m.getIdx();
+                        lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
+                        m.move(rowCurrent, colNext+1);
+                        lvBoard.cells[rowCurrent][colNext+1].arrive(m, id, false);
+                    }
+                    else if (checkMove(rowCurrent, colNext-1, "monster")) {
+                    	int id = m.getIdx();
+                        lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
+                        m.move(rowCurrent, colNext-1);
+                        lvBoard.cells[rowCurrent][colNext-1].arrive(m, id, false);
+                    }
+                    
             	}
             }
             for(Hero h : hTeam.getHeroes()){
@@ -133,8 +146,17 @@ public class ValorGame extends RPGGame{
                     h.recover();
                 }
                 else {
-                    h.revive();
-                    h.setFaint(false);
+                	//if faint, keep this hero out of game for 1 round
+                	//if(h.faintTime==1) {
+                	//	h.faintTime--;
+                	//}
+                	//else {
+                        //h.move(7, h.getColumn());
+                        //lvBoard.cells[7][h.getColumn()]
+                        //        .arrive(h, hTeam.getHeroes().indexOf(h), true);
+	        		h.revive();
+	                h.setFaint(false);
+                	//}
                 }
             }
         	Window.newMessage("End of round " + roundCounter + "!\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n");
