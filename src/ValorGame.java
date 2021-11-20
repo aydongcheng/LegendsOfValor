@@ -59,11 +59,11 @@ public class ValorGame extends RPGGame{
         // initialize monsters' locations
         for(int i=0,j=0; i<=8; i+=3,j++) {
             Monster monsterTmp = mTeam.getMonsters().get(j);
-            lvBoard.cells[6][i].arrive(monsterTmp, j, false);
-            monsterTmp.move(6, i);
+            lvBoard.cells[0][i].arrive(monsterTmp, j, false);
+            monsterTmp.move(0, i);
         }
 
-        while (roundCounter<6) {
+        while (true) {
             //display the map
         	roundCounter++;
 
@@ -199,6 +199,11 @@ public class ValorGame extends RPGGame{
                     int rowNext = 0;
                     int colNext = 0;
                     if (direction == 'w'){
+                    	//check for targets in range
+                        ArrayList<Characters> targetListAttack = getTargetList(rowCurrent, colCurrent, "monster");
+                        if (targetListAttack.size() != 0) {
+                            Window.newMessage("A monster is in your way!");
+                            break;
                         rowNext = h.getRow() - 1;
                         colNext = h.getColumn();
                     }
