@@ -14,12 +14,11 @@ public class ValorGame extends RPGGame{
 
     public ValorGame(){
        scan = new Scanner(System.in);
-       //TODO change class name
        hTeam = new HeroTeam();
        mTeam = new MonsterTeam();
     }
 
-    //game start
+
     public void start(){
         // ----- //
         // Welcome
@@ -28,7 +27,7 @@ public class ValorGame extends RPGGame{
         Window.newMessage("----------------------------");
     	Window.newMessage("Welcome to Legends of Valor!");
         Window.newMessage("----------------------------");
-        Window.newMessage("Press Enter to start: ");  // Press Enter to start
+        Window.newMessage("Press Enter to start: ");
         System.out.print(welcomeWindow);
         // Press Enter to start
         scan.nextLine();
@@ -64,9 +63,7 @@ public class ValorGame extends RPGGame{
         }
 
         while (true) {
-            //display the map
         	roundCounter++;
-
         	//create new monsters every 8 round
         	if(roundCounter!=0 && roundCounter%8==0){
         	    for(int i=0, j=0; i<=8; i+=3,j++){
@@ -80,6 +77,7 @@ public class ValorGame extends RPGGame{
         	Window.newMessage("This is round" + roundCounter + ", Hero Action Phase:");
             for(Hero h : hTeam.getHeroes()) {
                 Window.newMessage("This is " + h.getName() + "'s turn");
+                //call the method to choose actions for each of the heroes
 	            chooseAction(h, (CombatWindow)combatWindow);
             }
 
@@ -109,13 +107,12 @@ public class ValorGame extends RPGGame{
                     Window.show();
             	}
             	else {
-                    // move
+                    //move, when no target in range
                     int rowCurrent = m.getRow();
                     int colCurrent = m.getColumn();
                     int rowNext = rowCurrent + 1;
                     int colNext = colCurrent;
                     if (checkMove(rowNext, colNext, "monster")) {
-                        //int id = mTeam.getMonsters().indexOf(m);
                     	int id = m.getIdx();
                         lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
                         m.move(rowNext, colNext);
@@ -209,12 +206,11 @@ public class ValorGame extends RPGGame{
 
         outerLoop:
         while (true) {
-            System.out.print(c);
-            int input = Utils.safeIntInput("Input: ", 0, 9);
+            Window.show();
+            int input = Utils.safeIntInput("Please choose an action according to the manual on your right: ", 0, 9);
             switch(input) {
                 case 1:
                     Window.newMessage("Please choose your direction:");
-                    Window.show();
                     char[] allowedChars = {'w', 'a', 's', 'd'};
                     char direction = Utils.safeCharInput("Input: ", allowedChars);
 
@@ -242,13 +238,13 @@ public class ValorGame extends RPGGame{
                         rowNext = h.getRow();
                         colNext = h.getColumn() + 1;
                     }
-
+                    //check whether the next cell is accessible, or occupied
                     if (checkMove(rowNext, colNext, "hero")) {
                         //arrive, leave
                         lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
                         h.move(rowNext, colNext);
                         lvBoard.cells[rowNext][colNext].arrive(h, id, true);
-                        //update highest record
+                        //update highest position record
                         hTeam.updateHighest();
                         if(rowNext == 0) {
                             Window.newMessage("Heroes Win!!!");
@@ -437,7 +433,7 @@ public class ValorGame extends RPGGame{
             System.out.print(marketAndSellWindow);
             int totalNum = market.getTotalItemsNum();
 
-            char input = Utils.safeCharInput("Input",new char[]{'b','s','e'});
+            char input = Utils.safeCharInput("Please choose your action in the market window (buy, sell, exit)", new char[]{'b','s','e'});
             switch (input){
                 case 'b':
                     int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
@@ -516,7 +512,7 @@ public class ValorGame extends RPGGame{
             //print
             System.out.print(heroStatusWindow);
 
-            char input = Utils.safeCharInput("Input",new char[]{'u','e'});
+            char input = Utils.safeCharInput("Please choose your action in the status/inventory window (use/equip, exit)",new char[]{'u','e'});
             switch (input) {
                 case 'u':
                     int NumEquipInInventory = h.getInventory().getTotalItemsNum();
