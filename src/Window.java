@@ -4,13 +4,13 @@ public abstract class Window extends CMLWidget{
     protected ArrayList<CMLWidget> subWidgets = new ArrayList<CMLWidget>();
     protected Canvas canvas;
 
-    private static LogViewWidget logViewWidget = new LogViewWidget(92, 15);
+    private static LogViewWidget logViewWidget = new LogViewWidget(92 + 20, 15);
     private static int logCounter = 0;
 
     private static Window previousWindow;
 
     public Window() {
-        setWidthHeight(74 + 20, 37 + 17);
+        setWidthHeight(94 + 20, 37 + 17);
         canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
 
         // add log view widget

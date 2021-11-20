@@ -1,9 +1,9 @@
 public class CombatWindow extends Window {
     private LVBoard theBoard;
-    
+
     public CombatWindow() {
         theBoard = new LVBoard(8);
-        theBoard.setPosition(1, 1);
+        theBoard.setPosition(1, 10);
         subWidgets.add(theBoard);
 
         String[] messages = {"  +----------+",
@@ -21,8 +21,8 @@ public class CombatWindow extends Window {
                              "8. End Turn",
                              "9. Quit Game"};
         TextWidget textWidget = new TextWidget(18, 37, messages);
-        textWidget.setPosition(1, 75);
-        subWidgets.add(textWidget);        
+        textWidget.setPosition(1, 95);
+        subWidgets.add(textWidget);
     }
 
     public LVBoard getTheBoard() {

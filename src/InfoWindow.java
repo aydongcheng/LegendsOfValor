@@ -1,8 +1,8 @@
 public class InfoWindow extends Window{
     public InfoWindow(String infoWindowName){
         super();
-        setWidthHeight(94+20, 37+17);
-        canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
+//        setWidthHeight(94+20, 37+17);
+//        canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
         this.messagesSetter(infoWindowName);
         TextWidget textWidget = new TextWidget(18, 37, messages);
         textWidget.setPosition(1, 95);

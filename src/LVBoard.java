@@ -9,7 +9,7 @@ public class LVBoard extends Board {
 
     private Canvas canvas;
     ArrayList<CMLWidget> subWidgets = new ArrayList<CMLWidget>();;
-    
+
     //create map with size
     public LVBoard(int size){
         super(size);
@@ -30,7 +30,7 @@ public class LVBoard extends Board {
                 else {
                     cells[i][j] = probabilityCellCreator.createCell();
                 }
-                
+
 
                 CMLWidget currentWidget = cells[i][j];
                 currentWidget.setPosition(4 + i * 4, 1 + j * 9);
