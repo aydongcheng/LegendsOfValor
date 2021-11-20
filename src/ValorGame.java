@@ -271,61 +271,46 @@ public class ValorGame extends RPGGame{
                 case 6:
                     Window.newMessage("You are teleporting to:");
                     Window.newMessage("Row:");
-                    int row = Utils.safeIntInput("Input: ", 1, 8) - 1;
+                    int rowTeleport = Utils.safeIntInput("Input: ", 1, 8) - 1;
                     Window.newMessage("Column:");
-                    int column = Utils.safeIntInput("Input: ", 1, 8) - 1;
+                    int colTeleport = Utils.safeIntInput("Input: ", 1, 8) - 1;
     
                     //TODO check monster
                     
-                    if(!checkMove(row, column, "hero")){
-                        Window.newMessage("The place is inaccessible.");
-                        chooseAction(h, c);
+                    // check Move
+                    if(!checkMove(rowTeleport, colTeleport, "hero")) {
+                        Window.newMessage("You cannot go there!");
+                        break;
                     }
-                    else {
-                        //check highest
-                        if(row>=hTeam.getHighest()) {
-                            //check slot availability
-                            if (lvBoard.cells[row][column].slot1.trim().isEmpty()) {
-                                lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
-                                h.move(row, column);
-                                lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
-                            }
-                            else if(lvBoard.cells[row][column].slot2.trim().isEmpty()) {
-                                lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
-                                h.move(row, column);
-                                lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
-                            }
-                            else {
-                                Window.newMessage("The slots of this cell are full. Please try again.");
-                                chooseAction(h, c);
-                            }
-                        }
-                        else {
-                            Window.newMessage("This hero can't teleport to a location higher than previous highest record");
-                            chooseAction(h, c);
-                        }
+
+                    // check highest
+                    if (rowTeleport < hTeam.getHighest()) {
+                        Window.newMessage("This hero can't teleport to a location higher than previous highest record");
+                        break;
                     }
-                    
-                    break;
+
+                    // Teleport
+                    lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
+                    h.move(rowTeleport, colTeleport);
+                    lvBoard.cells[rowTeleport][colTeleport].arrive(h, id, true);
+                    break outerLoop;
 
                 //Back to Nexus
                 case 7:
-                    if (lvBoard.cells[7][h.getColumn()].slot1.trim().isEmpty()) {
-                        lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
-                        h.move(7, h.getColumn());
-                        lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
+                    int rowNexus = 7;
+                    int colNexus = h.getColumn();
 
+                    // check Move
+                    if(!checkMove(rowNexus, colNexus, "hero")) {
+                        Window.newMessage("You cannot go there!");
+                        break;
                     }
-                    else if(lvBoard.cells[7][h.getColumn()].slot2.trim().isEmpty()) {
-                        lvBoard.cells[h.getRow()][h.getColumn()].leave(h, id, true);
-                        h.move(7, h.getColumn());
-                        lvBoard.cells[h.getRow()][h.getColumn()].arrive(h, id, true);
-                    }
-                    else {
-                        Window.newMessage("The slots of this cell are full. Please try again.");
-                        chooseAction(h, c);
-                    }
-                    break;
+
+                    // Teleport to Nexus
+                    lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
+                    h.move(rowNexus, colNexus);
+                    lvBoard.cells[rowNexus][colNexus].arrive(h, id, true);
+                    break outerLoop;
 
                 //End turn
                 case 8:
