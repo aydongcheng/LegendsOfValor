@@ -544,7 +544,7 @@ public class ValorGame extends RPGGame{
         }
         //print the window for choosing heroes
         InfoWindow chooseHeroWindow = new InfoWindow("heroes");
-        ListWindow heroDetailsWindow = new ListWindow("Heroes to Choose");
+        ListWindow heroDetailsWindow = new ListWindow("Heroes to Choose",37);
         heroDetailsWindow.setPosition(1,1);
         heroDetailsWindow.addSubWidget(new BlankWidget(85,1+3,1, Displayer.listDisplay(heroesList,"Heroes",0)));
 
