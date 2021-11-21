@@ -8,7 +8,7 @@ public class KoulouCell extends SpecialCell {
         if (isHero) {
             theHero.setStrength((int)Math.ceil(theHero.getStrength() * 1.1));
         }
-        
+
     }
 
     @Override
@@ -21,11 +21,11 @@ public class KoulouCell extends SpecialCell {
 
     @Override
     public String toString() {
-        return "+-------+\n" + 
-               "| KOULOU|\n" +
-               "| " + 
+        return "+-------+\n" +
+               "| "+"\033[34m"+"KOULOU"+"\033[0m"+"|\n" +
+               "| " +
                   slot1 +
-                  " " + 
+                  " " +
                   slot2 +
                       " |\n" +
                "+-------+";

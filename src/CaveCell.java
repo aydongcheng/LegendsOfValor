@@ -1,14 +1,14 @@
 // A special cell, which modifies the hero inside it
 public class CaveCell extends SpecialCell{
     public CaveCell() {super();}
-    
+
     @Override
     public void arrive(Characters c, int id, boolean isHero) {
         super.arrive(c, id, isHero);
         if (isHero) {
             theHero.setAgility((int)Math.ceil(theHero.getAgility() * 1.1));
         }
-        
+
     }
 
     @Override
@@ -21,11 +21,11 @@ public class CaveCell extends SpecialCell{
 
     @Override
     public String toString() {
-        return "+-------+\n" + 
-               "|  CAVE |\n" +
-               "| " + 
+        return "+-------+\n" +
+                "|  "+"\033[33m"+"CAVE"+"\033[30m" + " |\n" +
+               "| " +
                   slot1 +
-                  " " + 
+                  " " +
                   slot2 +
                       " |\n" +
                "+-------+";
