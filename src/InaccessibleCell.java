@@ -10,8 +10,8 @@ public class InaccessibleCell extends Cell {
     @Override
     public String toString() {
         return "+-------+\n" +
-               ""+"\033[31m"+"|x|X|X|x|"+"\033[0m"+"\n" +
-               ""+"\033[31m"+"|x|X|X|x|"+"\033[0m"+"\n" +
+               ""+"\u001b[31m"+"|x|X|X|x|"+"\u001b[0m"+"\n" +
+               ""+"\u001b[31m"+"|x|X|X|x|"+"\u001b[0m"+"\n" +
                "+-------+";
     }
 }

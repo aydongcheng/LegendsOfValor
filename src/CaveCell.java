@@ -22,7 +22,7 @@ public class CaveCell extends SpecialCell{
     @Override
     public String toString() {
         return "+-------+\n" +
-                "|  "+"\033[33m"+"CAVE"+"\033[30m" + " |\n" +
+                "|  "+"\u001b[33m"+"CAVE"+"\u001b[30m" + " |\n" +
                "| " +
                   slot1 +
                   " " +

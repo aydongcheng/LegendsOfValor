@@ -22,7 +22,7 @@ public class BushCell extends SpecialCell{
     @Override
     public String toString() {
         return "+-------+\n" +
-               "|  "+"\033[32m"+"BUSH"+"\033[0m"+" |\n" +
+               "|  "+"\u001b[32m"+"BUSH"+"\u001b[0m"+" |\n" +
                "| " +
                   slot1 +
                   " " +

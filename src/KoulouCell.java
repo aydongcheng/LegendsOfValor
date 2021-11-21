@@ -22,7 +22,7 @@ public class KoulouCell extends SpecialCell {
     @Override
     public String toString() {
         return "+-------+\n" +
-               "| "+"\033[34m"+"KOULOU"+"\033[0m"+"|\n" +
+               "| "+"\u001b[34m"+"KOULOU"+"\u001b[0m"+"|\n" +
                "| " +
                   slot1 +
                   " " +

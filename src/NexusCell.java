@@ -5,7 +5,7 @@ public class NexusCell extends Cell{
     @Override
     public String toString() {
         return "+-------+\n" +
-               "| "+"\033[35m"+"NEXUS"+"\033[0m"+" |\n" +
+               "| "+"\u001b[35m"+"NEXUS"+"\u001b[0m"+" |\n" +
                "| " +
                   slot1 +
                   " " +
