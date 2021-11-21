@@ -1,3 +1,4 @@
+// A CMLWidget for demonstrating multiple lines of text. It comes with a frame.
 public class TextWidget extends CMLWidget {
     private String[] messages;  
     

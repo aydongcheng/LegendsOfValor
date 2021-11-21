@@ -1,6 +1,6 @@
+//main method to start the game
 public class Play {
-    //main method to start the game
-
+    public Play() {}
     public static void main(String[] args) {
     	/*disable the previous game method
 

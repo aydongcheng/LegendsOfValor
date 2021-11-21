@@ -1,4 +1,6 @@
+// A special cell modifing hero status
 public class KoulouCell extends SpecialCell {
+    public KoulouCell() {super();}
 
     @Override
     public void arrive(Characters c, int id, boolean isHero) {

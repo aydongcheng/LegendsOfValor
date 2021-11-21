@@ -1,3 +1,4 @@
+// A window responsible for demonstrating lists.
 public class ListWindow extends Window{
     public ListWindow(){}
 

@@ -1,3 +1,4 @@
+// The first window that welcomes the player.
 public class WelcomeWindow extends Window {
 
     public WelcomeWindow() {

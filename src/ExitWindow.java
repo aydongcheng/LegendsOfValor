@@ -1,3 +1,4 @@
+// The window for exiting
 public class ExitWindow extends Window {
 
     public ExitWindow() {

@@ -1,8 +1,13 @@
 import java.util.*;
+import javax.sound.sampled.*;
+import java.io.File;
+
 
 // A class that provides utility functions.
 public class Utils {
     static Scanner scan = new Scanner(System.in);
+
+    public Utils() {}
 
     // Foolproof integer input
     public static int safeIntInput(String message, int min, int max) {
@@ -95,4 +100,16 @@ public class Utils {
         System.out.print("\n");
         System.out.print("\n");
     }
+
+	public static void playSound(String soundFile) {
+		try {
+			File f = new File("./" + soundFile);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(f.toURI().toURL());  
+			Clip clip = AudioSystem.getClip();
+			clip.open(audioIn);
+			clip.start();
+		}
+		catch (Exception e) {
+		}
+	}
 }

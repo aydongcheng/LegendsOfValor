@@ -2,6 +2,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+// An abstraction of a team of heroes. Includes the methods that are useful when managing multiple heroes.
 public class HeroTeam extends Team{
 
     private ArrayList<Hero> heroes;

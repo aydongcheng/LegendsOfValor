@@ -1,5 +1,6 @@
 import java.util.*;
 
+// A general class for a CMLWidget called a Window. A Window includes a static logView widget and specifies a standard size that's applied across all windows.
 public abstract class Window extends CMLWidget{
     protected ArrayList<CMLWidget> subWidgets = new ArrayList<CMLWidget>();
     protected Canvas canvas;

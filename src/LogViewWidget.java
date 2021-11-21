@@ -1,5 +1,6 @@
 import java.util.*;
 
+// A CMLWidget that is responsible for demonstrating log view. It records the history logs and displays them.
 public class LogViewWidget extends CMLWidget {
     private ArrayList<String> messages = new ArrayList<String>();  
     

@@ -1,4 +1,7 @@
+// A special cell, which modifies the hero inside it
 public class CaveCell extends SpecialCell{
+    public CaveCell() {super();}
+    
     @Override
     public void arrive(Characters c, int id, boolean isHero) {
         super.arrive(c, id, isHero);

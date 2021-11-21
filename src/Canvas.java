@@ -1,7 +1,10 @@
 import java.util.*;
 
+// A CMLWidget which is used to arrange multiple CMLWidgets.
 public class Canvas extends CMLWidget {
     private ArrayList<CMLWidget> subWidgets;
+
+    public Canvas() {}
 
     public Canvas(ArrayList<CMLWidget> subWidgets){
         this.subWidgets = subWidgets;

@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+// An abstraction of a team of monsters. Includes the methods that are useful when managing multiple monsters.
 public class MonsterTeam extends Team{
 
     private ArrayList<Monster> Monsters;

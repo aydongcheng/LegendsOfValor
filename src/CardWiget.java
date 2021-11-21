@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 
+// A CMLWidget used to demonstrate info in an arranged way.
 public class CardWiget extends CMLWidget{
     public CardWiget(){ }
 

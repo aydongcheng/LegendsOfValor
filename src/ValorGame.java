@@ -20,6 +20,9 @@ public class ValorGame extends RPGGame{
 
 
     public void start(){
+        // Play BGM
+        Utils.playSound("./BabyElephantWalk300.wav");
+
         // ----- //
         // Welcome
         // ----- //
@@ -328,9 +331,9 @@ public class ValorGame extends RPGGame{
                 //Teleport
                 case 6:
                     Window.newMessage("You are teleporting to:");
-                    Window.newMessage("Row:");
+                    Window.newMessage("Row (1~8):");
                     int rowTeleport = Utils.safeIntInput("Input: ", 1, 8) - 1;
-                    Window.newMessage("Column:");
+                    Window.newMessage("Column (1~8):");
                     int colTeleport = Utils.safeIntInput("Input: ", 1, 8) - 1;
 
                     //TODO check monster

@@ -1,3 +1,4 @@
+// A class which displays whether an item is equipable
 public class EquipNo implements Equipable {
     public EquipNo(){}
 

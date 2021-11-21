@@ -1,3 +1,4 @@
+// A class for equiping items
 public class EquipOnce implements Equipable{
     public EquipOnce(){}
 

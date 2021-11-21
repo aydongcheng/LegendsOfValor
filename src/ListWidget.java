@@ -1,4 +1,4 @@
-//package PACKAGE_NAME;
-
+// A list widget
 public class ListWidget {
+    public ListWidget() {}
 }

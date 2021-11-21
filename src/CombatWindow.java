@@ -1,3 +1,4 @@
+// The combat window. Includes a game map and a manual.
 public class CombatWindow extends Window {
     private LVBoard theBoard;
 
@@ -6,6 +7,7 @@ public class CombatWindow extends Window {
         theBoard.setPosition(1, 10);
         subWidgets.add(theBoard);
 
+        // Add manual
         String[] messages = {"  +----------+",
                              "  |  Manual  |",
                              "  +----------+",
@@ -23,6 +25,29 @@ public class CombatWindow extends Window {
         TextWidget textWidget = new TextWidget(18, 37, messages);
         textWidget.setPosition(1, 95);
         subWidgets.add(textWidget);
+
+        // Add Row Number
+        String[] messagesRowNumber = {"", "",
+                                     "Row #:",
+                                      "",
+                                      " Row 1",
+                                      "", "", "",
+                                      " Row 2",
+                                      "", "", "",
+                                      " Row 3",
+                                      "", "", "",
+                                      " Row 4",
+                                      "", "", "",
+                                      " Row 5",
+                                      "", "", "",
+                                      " Row 6",
+                                      "", "", "",
+                                      " Row 7",
+                                      "", "", "",
+                                      " Row 8"};
+        TextWidget textWidgetRowNumber = new TextWidget(8, 37, messagesRowNumber);
+        textWidgetRowNumber.setPosition(1, 1);
+        subWidgets.add(textWidgetRowNumber);
     }
 
     public LVBoard getTheBoard() {

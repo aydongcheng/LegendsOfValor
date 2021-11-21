@@ -1,4 +1,7 @@
+// The cell that is inaccessible.
 public class InaccessibleCell extends Cell {
+    public InaccessibleCell() {super();}
+    
 	public InaccessibleCell(Boolean accessible){
 		super();
 		this.setAccessible(accessible);

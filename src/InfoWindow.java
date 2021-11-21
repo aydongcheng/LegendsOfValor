@@ -1,4 +1,7 @@
-public class InfoWindow extends Window{
+// An window demonstrating information for market, hero, heroes, and status.
+public class InfoWindow extends Window {
+    public InfoWindow() {};
+    
     public InfoWindow(String infoWindowName){
         super();
 //        setWidthHeight(94+20, 37+17);

@@ -1,5 +1,6 @@
+// A CMLWidget showing text in a Window. Not enclosed by a frame.
 public class BlankWidget extends CMLWidget{
-    public BlankWidget(){ }
+    public BlankWidget(){}
 
     public BlankWidget(int width, int rowStart, int colStart, String string){
         this.string = string;

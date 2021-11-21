@@ -1,3 +1,4 @@
+// A CMLWidget. Used to arrange and demonstrate commandline UI.
 public abstract class CMLWidget {
     protected int widgetWidth = 0;
     protected int widgetHeight = 0;

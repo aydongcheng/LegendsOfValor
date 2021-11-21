@@ -1,4 +1,7 @@
+// A special cell. Modifies the attributes of heroes.
 public class BushCell extends SpecialCell{
+    public BushCell() {super();}
+    
     @Override
     public void arrive(Characters c, int id, boolean isHero) {
         super.arrive(c, id, isHero);
