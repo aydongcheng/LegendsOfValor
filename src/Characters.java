@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+
 //the super class of characters in the game
 public abstract class Characters implements Fightable, LevelUp{
     public Characters(){}
@@ -51,6 +53,8 @@ public abstract class Characters implements Fightable, LevelUp{
     public int getColumn() {
         return column;
     }
+
+    public abstract ArrayList<StringBuilder> getDisplayLines();
 
     protected void setColumn(int column) {
         this.column = column;

@@ -2,8 +2,12 @@ public class ListWindow extends Window{
     public ListWindow(){}
 
     public ListWindow(String title){
+        this(title, 18);
+    }
+
+    public ListWindow(String title, int height){
         super();
-        setWidthHeight(94, 18);
+        setWidthHeight(94, height);
         subWidgets.remove(0);
         canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
         this.title = title;

@@ -48,13 +48,16 @@ public class Hero extends Characters{
             actualDamage = Math.max(damage - ((int) (armor.getDamageReduction()*0.01)), 0);
         if(actualDamage>getHp()){
             actualDamage =getHp();
-            setHp(getLevel()*100/2);
             setFaint(true);
             Window.newMessage("Hero "+ getName() +" is dead");
         }
         else
             setHp(getHp()-actualDamage);
         return actualDamage;
+    }
+
+    public void revive(){
+        setHp(getLevel()*50);
     }
 
     //cast a spell, return the spell damage
@@ -224,10 +227,6 @@ public class Hero extends Characters{
         return attributes;
     }
 
-    public void display(){
-        Displayer.displayLines(getDisplayLines());
-    }
-
     public int getMana() {
         return mana;
     }
@@ -318,6 +317,14 @@ public class Hero extends Characters{
         return getName();
     }
 
+    public static ArrayList<StringBuilder> getGraphicLines(){
+        ArrayList<StringBuilder> lines = new ArrayList<>();
+        for(String s : Hero.graphic.split("\n")){
+            lines.add(new StringBuilder(s));
+        }
+        return lines;
+    }
+
     private int mana;
     private int strength;
     private int agility;
@@ -328,4 +335,17 @@ public class Hero extends Characters{
     private Armor armor;
     private Spell spell;
     private Inventory inventory;
+    private static String graphic =
+            "            -*%@@@@%*-.       \n"+
+            "          :=%@@@@@@@@@@%=     \n"+
+            "      +@@@@@@@@@@@@@@@@@@@@*  \n"+
+            " :#@@@@@@@@@@@@@@@@@@@@@@@@@@:\n"+
+            "#@@@@@@@@@@@@@@@@@@@@@@@@@@@@#\n"+
+            "=@@@@@@#-..-=++*@@@@@@@@@@@@@@\n"+
+            "  -==-.       +@@@@@@@@@@@@@@#\n"+
+            "          :%@@@@@@@@@@@@@@@@% \n"+
+            "        @@@@@@@@@@@@@@@@@@+   \n"+
+            "      =@@@@@@@@@@@@@@@@@@@=:  \n"+
+            "    -#@@@@@@@@@@@@@@@@@@@@@@+ \n"+
+            "    %@@@@@@@@@@@@@@@@@@@@@@@@.\n";
 }

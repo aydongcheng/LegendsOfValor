@@ -5,10 +5,10 @@ public class MonsterTeam extends Team{
     private ArrayList<Monster> Monsters;
     //win check
     // private String teamStatus;
-    
+
     public MonsterTeam () {
         Monsters = new ArrayList<>();
-        
+
         //TODO better build monster team method
         for (int i=0;i<3;i++) {
         	Monster m = RandomMonsterCreator.createMonster(1);
@@ -16,9 +16,9 @@ public class MonsterTeam extends Team{
             m.setColumn(i);
         	this.addMonster(m);
         }
-        
+
     }
-    
+
 
     //add a monster to the team
     private void addMonster(Monster m){
@@ -28,11 +28,6 @@ public class MonsterTeam extends Team{
 
     public ArrayList<Monster> getMonsters() {
         return Monsters;
-    }
-
-    //display the name of heroes in the team
-    public void displayMonstersName(){
-        System.out.print(Displayer.listDisplay(Monsters,"Monsters",0));
     }
 
     public String displayMonstersNameString(){

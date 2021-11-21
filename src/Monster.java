@@ -14,6 +14,8 @@ public class Monster extends Characters{
         setDefense(defense);
         setDodgeChance(dodgeChance);
         setHp(initLevel*100);
+        monsterIndexer++;
+        
     }
 
     //create monster with attributes in string list form
@@ -117,9 +119,17 @@ public class Monster extends Characters{
     public String toString() {
         return getName();
     }
+    
+    public int getIdx() {
+    	return monsterIdx;
+    }
 
     private int initLevel;
     private int damage;
     private int defense;
     private int dodgeChance;
+    //To keep track of how many monster have been generated
+    private static int monsterIndexer = 0;
+    //unique index number for each of the monsters
+    private final int monsterIdx = monsterIndexer;
 }

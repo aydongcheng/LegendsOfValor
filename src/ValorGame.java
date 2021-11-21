@@ -14,12 +14,11 @@ public class ValorGame extends RPGGame{
 
     public ValorGame(){
        scan = new Scanner(System.in);
-       //TODO change class name
        hTeam = new HeroTeam();
        mTeam = new MonsterTeam();
     }
 
-    //game start
+
     public void start(){
         // ----- //
         // Welcome
@@ -28,7 +27,7 @@ public class ValorGame extends RPGGame{
         Window.newMessage("----------------------------");
     	Window.newMessage("Welcome to Legends of Valor!");
         Window.newMessage("----------------------------");
-        Window.newMessage("Press Enter to start: ");  // Press Enter to start
+        Window.newMessage("Press Enter to start: ");
         System.out.print(welcomeWindow);
         // Press Enter to start
         scan.nextLine();
@@ -59,29 +58,26 @@ public class ValorGame extends RPGGame{
         // initialize monsters' locations
         for(int i=0,j=0; i<=8; i+=3,j++) {
             Monster monsterTmp = mTeam.getMonsters().get(j);
-            lvBoard.cells[0][i].arrive(monsterTmp, j, false);
+            lvBoard.cells[0][i].arrive(monsterTmp, monsterTmp.getIdx(), false);
             monsterTmp.move(0, i);
         }
 
-		//round start
-			//turn start, iterate the arrayList of heroes
-			//hero 1 move
-			//hero 2
-			//hero 3
-			//monsters' turns
-			//iterate for each monsters to forward/attack
-
-			//next round, round timer for add new monsters
-    		//print hero team status, monster team status
-
-
-        while (roundCounter<6) {
-            //display the map
+        while (true) {
         	roundCounter++;
+        	//create new monsters every 8 round
+        	if(roundCounter!=0 && roundCounter%8==0){
+        	    for(int i=0, j=0; i<=8; i+=3,j++){
+        	        Monster newMonster = RandomMonsterCreator.createMonster(hTeam.getHeroes().get(j).getLevel());
+                    lvBoard.cells[0][i].arrive(newMonster, newMonster.getIdx(), false);
+                    newMonster.move(0, i);
+                    mTeam.getMonsters().add(newMonster);
+                }
+            }
 
         	Window.newMessage("This is round" + roundCounter + ", Hero Action Phase:");
             for(Hero h : hTeam.getHeroes()) {
                 Window.newMessage("This is " + h.getName() + "'s turn");
+                //call the method to choose actions for each of the heroes
 	            chooseAction(h, (CombatWindow)combatWindow);
             }
 
@@ -93,28 +89,72 @@ public class ValorGame extends RPGGame{
                 ArrayList<Characters> targetList = getTargetList(m.getRow(), m.getColumn(), "hero");
             	if (targetList.size() != 0) {
             		// select target
-                    int randomID = (int)Math.ceil(Math.random() * targetList.size());
+                    int randomID = (int)(Math.random() * targetList.size());
                     Hero targetHero = (Hero)targetList.get(randomID);
 
                     // attack
+                    int monsterDamage = m.attack();
+                    int heroGetHurt = targetHero.getHurt(monsterDamage);
+                    Window.newMessage("Monster "+ m.getName() +" cast "+ heroGetHurt + " damage to hero "+ targetHero.getName());
 
-
+                    if(targetHero.isFaint()){
+                        lvBoard.cells[targetHero.getRow()][targetHero.getColumn()]
+                                .leave(targetHero, hTeam.getHeroes().indexOf(targetHero), true);
+                        targetHero.move(7, targetHero.getColumn());
+                        lvBoard.cells[7][targetHero.getColumn()]
+                                .arrive(targetHero, hTeam.getHeroes().indexOf(targetHero), true);
+                    }
+                    Window.show();
             	}
             	else {
-                    // move
+                    //move, when no target in range
                     int rowCurrent = m.getRow();
                     int colCurrent = m.getColumn();
                     int rowNext = rowCurrent + 1;
                     int colNext = colCurrent;
                     if (checkMove(rowNext, colNext, "monster")) {
-                        int id = mTeam.getMonsters().indexOf(m);
+                    	int id = m.getIdx();
                         lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
                         m.move(rowNext, colNext);
                         lvBoard.cells[rowNext][colNext].arrive(m, id, false);
-                        // m.setRow(m.getRow()+1);
+                        if(rowNext == 7){
+                            Window.newMessage("Monsters Win!!!");
+                            quitGame();
+                        }
                     }
-                    // else, do nothing
+                    //else, try the other column
+                    else if(checkMove(rowCurrent, colNext+1, "monster")) {
+                    	int id = m.getIdx();
+                        lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
+                        m.move(rowCurrent, colNext+1);
+                        lvBoard.cells[rowCurrent][colNext+1].arrive(m, id, false);
+                    }
+                    else if (checkMove(rowCurrent, colNext-1, "monster")) {
+                    	int id = m.getIdx();
+                        lvBoard.cells[rowCurrent][colCurrent].leave(m, id, false);
+                        m.move(rowCurrent, colNext-1);
+                        lvBoard.cells[rowCurrent][colNext-1].arrive(m, id, false);
+                    }
+                    
             	}
+            }
+            for(Hero h : hTeam.getHeroes()){
+                if(!h.isFaint()){
+                    h.recover();
+                }
+                else {
+                	//if faint, keep this hero out of game for 1 round
+                	//if(h.faintTime==1) {
+                	//	h.faintTime--;
+                	//}
+                	//else {
+                        //h.move(7, h.getColumn());
+                        //lvBoard.cells[7][h.getColumn()]
+                        //        .arrive(h, hTeam.getHeroes().indexOf(h), true);
+	        		h.revive();
+	                h.setFaint(false);
+                	//}
+                }
             }
         	Window.newMessage("End of round " + roundCounter + "!\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n");
             Window.newMessage(Displayer.listDisplay(hTeam.getHeroes(),"Heroes",0));
@@ -129,7 +169,7 @@ public class ValorGame extends RPGGame{
         for (int idx_1 = 0; idx_1 < 3; idx_1++) {
             for (int idx_2 = 0; idx_2 < 3; idx_2++) {
                 int rowTmp = row - 1 + idx_1;
-                int colTmp = row - 1 + idx_2;
+                int colTmp = col - 1 + idx_2;
 
                 boolean cond1 = (rowTmp >=0) && (rowTmp <= 7);
                 boolean cond2 = (colTmp >=0) && (colTmp <= 7);
@@ -139,14 +179,14 @@ public class ValorGame extends RPGGame{
 
                 Cell cellTmp = lvBoard.cells[rowTmp][colTmp];
 
-                if (targetType == "hero") {
+                if (targetType.equals("hero")) {
                     if (!cellTmp.hasHero()) {
                         continue;
                     }
                     targetList.add(cellTmp.getHero());
                 }
 
-                if (targetType == "monster") {
+                if (targetType.equals("monster")) {
                     if (!cellTmp.hasMonster()) {
                         continue;
                     }
@@ -167,17 +207,22 @@ public class ValorGame extends RPGGame{
         outerLoop:
         while (true) {
             System.out.print(c);
-            int input = Utils.safeIntInput("Input: ", 0, 9);
+            int input = Utils.safeIntInput("Please choose an action according to the manual on your right: ", 0, 9);
             switch(input) {
                 case 1:
                     Window.newMessage("Please choose your direction:");
-                    Window.show();
                     char[] allowedChars = {'w', 'a', 's', 'd'};
                     char direction = Utils.safeCharInput("Input: ", allowedChars);
-    
+
                     int rowNext = 0;
                     int colNext = 0;
                     if (direction == 'w'){
+                    	//check for targets in range
+                        ArrayList<Characters> targetListAttack = getTargetList(rowCurrent, colCurrent, "monster");
+                        if (targetListAttack.size() != 0) {
+                            Window.newMessage("A monster is in your way!");
+                            break;
+                        }
                         rowNext = h.getRow() - 1;
                         colNext = h.getColumn();
                     }
@@ -193,24 +238,28 @@ public class ValorGame extends RPGGame{
                         rowNext = h.getRow();
                         colNext = h.getColumn() + 1;
                     }
-    
+                    //check whether the next cell is accessible, or occupied
                     if (checkMove(rowNext, colNext, "hero")) {
                         //arrive, leave
                         lvBoard.cells[rowCurrent][colCurrent].leave(h, id, true);
                         h.move(rowNext, colNext);
                         lvBoard.cells[rowNext][colNext].arrive(h, id, true);
-                        //update highest record
+                        //update highest position record
                         hTeam.updateHighest();
+                        if(rowNext == 0) {
+                            Window.newMessage("Heroes Win!!!");
+                            quitGame();
+                        }
                         break outerLoop;
                     }
                     Window.newMessage("You cannot go there!");
                     break;
-    
+
                 //check info
                 case 2:
                     checkInfo(h);
                     break;
-                
+
                 //buy
                 case 3:
                     //new market
@@ -230,19 +279,20 @@ public class ValorGame extends RPGGame{
                         Window.newMessage("No visible target!");
                         break;
                     }
-                    
-                    // select target
-                    Window.newMessage("Please select a target:");
-                    for (int idx = 0; idx < targetListAttack.size(); idx++) {
-                        Window.newMessage("Target #" + idx + " - " + targetListAttack.get(idx).getName());
-                    }
-                    Monster targetTmpAttack = (Monster)targetListAttack.get(Utils.safeIntInput("Input: ", 0, targetListAttack.size() - 1));
+
+                    Monster targetTmpAttack = chooseMonster(targetListAttack);
 
                     // perform attack
                     targetTmpAttack.getHurt(h.attack());
                     Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpAttack.getName());
 
-                    //another method for monster attack, since m.attack() differ from h.attack()
+                    if(targetTmpAttack.isFaint()){
+                        lvBoard.cells[targetTmpAttack.getRow()][targetTmpAttack.getColumn()]
+                                .leave(targetTmpAttack, targetTmpAttack.getIdx(), false);
+                        mTeam.getMonsters().remove(targetTmpAttack);
+                        h.getRewards(targetTmpAttack.getLevel());
+                    }
+
                     break outerLoop;
 
                 //Cast spell
@@ -252,19 +302,27 @@ public class ValorGame extends RPGGame{
                         Window.newMessage("No visible target!");
                         break;
                     }
-                    
-                    // select target
-                    Window.newMessage("Please select a target:");
-                    for (int idx = 0; idx < targetListSpell.size(); idx++) {
-                        Window.newMessage("Target #" + idx + " - " + targetListSpell.get(idx).getName());
-                    }
-                    Monster targetTmpSpell = (Monster)targetListSpell.get(Utils.safeIntInput("Input: ", 0, targetListSpell.size() - 1));
+
+                    Monster targetTmpSpell = chooseMonster(targetListSpell);
 
                     // perform spell
-                    targetTmpSpell.getHurt(h.attack());
-                    Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpSpell.getName());
+                    int heroDamage = h.SpellAttack();
+                    if(heroDamage==0){
+                        Window.newMessage("Hero can't cast a spell!");
+                        break;
+                    }
+                    int monsterGethurt = targetTmpSpell.getHurt(heroDamage);
+                    Window.newMessage("Hero "+ h.getName() +" dealt "+ monsterGethurt + " damage to monster "+ targetTmpSpell.getName());
+                    h.getSpell().specialEffect(targetTmpSpell);
+                    Window.newMessage("Monster "+ targetTmpSpell.getName() + " " + h.getSpell().getSpecil());
 
-                    //another method for monster attack, since m.attack() differ from h.attack()
+                    if(targetTmpSpell.isFaint()){
+                        lvBoard.cells[targetTmpSpell.getRow()][targetTmpSpell.getColumn()]
+                                .leave(targetTmpSpell, targetTmpSpell.getIdx(), false);
+                        mTeam.getMonsters().remove(targetTmpSpell);
+                        h.getRewards(targetTmpSpell.getLevel());
+                    }
+                    Window.show();
                     break outerLoop;
 
                 //Teleport
@@ -274,9 +332,9 @@ public class ValorGame extends RPGGame{
                     int rowTeleport = Utils.safeIntInput("Input: ", 1, 8) - 1;
                     Window.newMessage("Column:");
                     int colTeleport = Utils.safeIntInput("Input: ", 1, 8) - 1;
-    
+
                     //TODO check monster
-                    
+
                     // check Move
                     if(!checkMove(rowTeleport, colTeleport, "hero")) {
                         Window.newMessage("You cannot go there!");
@@ -340,16 +398,14 @@ public class ValorGame extends RPGGame{
             return false;
         }
 
-        if (subjectType == "hero") {
+        if (subjectType.equals("hero")) {
             if (lvBoard.cells[row][column].hasHero()) {
                 return false;
             }
         }
 
-        if (subjectType == "monster") {
-            if (lvBoard.cells[row][column].hasMonster()) {
-                return false;
-            }
+        if (subjectType.equals("monster")) {
+            return !lvBoard.cells[row][column].hasMonster();
         }
 
         return true;
@@ -377,20 +433,25 @@ public class ValorGame extends RPGGame{
             System.out.print(marketAndSellWindow);
             int totalNum = market.getTotalItemsNum();
 
-            char input = Utils.safeCharInput("Input",new char[]{'b','s','e'});
+            char input = Utils.safeCharInput("Please choose your action in the market window (buy, sell, exit)", new char[]{'b','s','e'});
             switch (input){
                 case 'b':
                     int index = Utils.safeIntInput("Please select the merchandise to buy:",0,totalNum-1);
                     Merchandise merchandise = market.getItem(index);
-                    Window.newMessage(merchandise.getDisplayLines().toString());
-                    System.out.print(marketAndSellWindow);
+                    //print Merchandise attributes by line
+                    Window.newMessage("-----Merchandise's Info-----");
+                    String merInfo = merchandise.getDisplayLines().toString();
+                    for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
+                        Window.newMessage(s);
+                    }
                     Window.newMessage("Are you sure to buy this merchandise?(y/others)");
+                    System.out.print(marketAndSellWindow);
                     String check= scan.next();
                     if(check.equals("y")) {
                         if (!hero.buyMerchandise(merchandise))
-                        Window.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
+                            Window.newMessage("Sorry hero " + hero.getName() + " does not meet the purchase conditions");
                         else
-                        Window.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
+                            Window.newMessage("Hero " + hero.getName() + " got " + merchandise.getName());
                     }
                     break;
                 case 's':
@@ -405,12 +466,12 @@ public class ValorGame extends RPGGame{
                     merchandise = hero.getInventory().getItem(indexOfEquipment);
                     //print Merchandise attributes by line
                     Window.newMessage("-----Merchandise's Info-----");
-                    String merInfo = merchandise.getDisplayLines().toString();
+                    merInfo = merchandise.getDisplayLines().toString();
                     for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
                         Window.newMessage(s);
                     }
-                    System.out.print(marketAndSellWindow);
                     Window.newMessage("Are you sure to sell this merchandise?(y/others)");
+                    System.out.print(marketAndSellWindow);
                     check = scan.next();
                     if(check.equals("y")) {
                         hero.sellMerchandise(merchandise);
@@ -433,6 +494,9 @@ public class ValorGame extends RPGGame{
             statusWindow.setPosition(1, 1);
             ArrayList<ArrayList<StringBuilder>> heroInfos = new ArrayList<>();
             heroInfos.add(h.getDisplayLines());
+            heroInfos.add(new ArrayList<StringBuilder>());
+            heroInfos.add(Hero.getGraphicLines());
+
             CardWiget heroInfo = new CardWiget(heroInfos);
             heroInfo.setPosition(1 + 3, 1);
             statusWindow.addSubWidget(heroInfo);
@@ -448,7 +512,7 @@ public class ValorGame extends RPGGame{
             //print
             System.out.print(heroStatusWindow);
 
-            char input = Utils.safeCharInput("Input",new char[]{'u','e'});
+            char input = Utils.safeCharInput("Please choose your action in the status/inventory window (use/equip, exit)",new char[]{'u','e'});
             switch (input) {
                 case 'u':
                     int NumEquipInInventory = h.getInventory().getTotalItemsNum();
@@ -466,8 +530,8 @@ public class ValorGame extends RPGGame{
                     for(String s : merInfo.substring(1, merInfo.length() - 1).split(", ")) {
                         Window.newMessage(s);
                     }
-                    System.out.print(heroStatusWindow);
                     Window.newMessage("Are you sure to equip or use this merchandise?(y/others)");
+                    System.out.print(heroStatusWindow);
                     String check = scan.next();
                     if(check.equals("y")) {
                         h.equipOrUseMerchandise(merchandise);
@@ -482,7 +546,7 @@ public class ValorGame extends RPGGame{
     }
 
     //choose hero to join the team
-    public void chooseHero() {
+    private void chooseHero() {
     	//scan hero files from config
     	ArrayList<Hero> heroesList = new ArrayList<>();
         String[] files = new String[]{"Warriors", "Sorcerers", "Paladins"};
@@ -501,7 +565,7 @@ public class ValorGame extends RPGGame{
         }
         //print the window for choosing heroes
         InfoWindow chooseHeroWindow = new InfoWindow("heroes");
-        ListWindow heroDetailsWindow = new ListWindow("Heroes to Choose");
+        ListWindow heroDetailsWindow = new ListWindow("Heroes to Choose",37);
         heroDetailsWindow.setPosition(1,1);
         heroDetailsWindow.addSubWidget(new BlankWidget(85,1+3,1, Displayer.listDisplay(heroesList,"Heroes",0)));
 
@@ -543,6 +607,26 @@ public class ValorGame extends RPGGame{
                     i--;
             }
         }
+    }
+
+    private Monster chooseMonster(ArrayList<Characters> targetList){
+        ArrayList<ArrayList<StringBuilder>> monstersInfo = new ArrayList<>();
+        // select target
+        Window.newMessage("Please select a target:");
+        for (int idx = 0; idx < targetList.size(); idx++) {
+            ArrayList<StringBuilder> monsterInfo = targetList.get(idx).getDisplayLines();
+            monsterInfo.add(0,new StringBuilder("Target " + idx ));
+            monstersInfo.add(monsterInfo);
+        }
+        InfoWindow MonsterWindow = new InfoWindow("monster");
+        ListWindow MonsterInfoWindow = new ListWindow("Monster",37);
+        MonsterInfoWindow.setPosition(1,1);
+        CardWiget monsterInfoWidget = new CardWiget(monstersInfo);
+        monsterInfoWidget.setPosition(1 + 3, 1);
+        MonsterInfoWindow.addSubWidget(monsterInfoWidget);
+        MonsterWindow.addSubWidget(MonsterInfoWindow);
+        System.out.println(MonsterWindow);
+        return (Monster)targetList.get(Utils.safeIntInput("Input: ", 0, targetList.size() - 1));
     }
 
 

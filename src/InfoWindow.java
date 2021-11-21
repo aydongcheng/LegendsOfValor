@@ -1,8 +1,8 @@
 public class InfoWindow extends Window{
     public InfoWindow(String infoWindowName){
         super();
-        setWidthHeight(94+20, 37+17);
-        canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
+//        setWidthHeight(94+20, 37+17);
+//        canvas = new Canvas(widgetWidth, widgetHeight, subWidgets);
         this.messagesSetter(infoWindowName);
         TextWidget textWidget = new TextWidget(18, 37, messages);
         textWidget.setPosition(1, 95);
@@ -21,24 +21,13 @@ public class InfoWindow extends Window{
                     "    s: Sell",
                     "    e: Exit",};
             break;
-        /*not sure
-    	case "map":
+    	case "monster":
             this.messages = new String[]{"  +----------+",
                     "  |  Manual  |",
                     "  +----------+",
                     "----------------",
-                    " 1.Move",
-                    " 2.Check Status",
-                    " 3.Buy",
-                    " 4.Check Map",
-                    " 5.Attack",
-                    " 6.Cast Spell",
-                    " 7.Teleport",
-                    " 8.BackTo Nexus",
-                    " 9.End Turn",
-                    " 0.Quit Game",};
+                    "    e: Exit"};
             break;
-            */
     	case "heroes":
             this.messages = new String[]{"  +----------+",
                     "  |  Manual  |",
