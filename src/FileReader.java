@@ -11,7 +11,7 @@ public class FileReader {
 
     //read the config file with fileName
     public List<String> readFile(String fileName){
-        String file = System.getProperty("user.dir") + "/src/ConfigFiles/" + fileName + ".txt";
+        String file = System.getProperty("user.dir") + "/ConfigFiles/" + fileName + ".txt";
         List<String> lines = Collections.emptyList();
         try {
             lines = Files.readAllLines(Paths.get(file), StandardCharsets.UTF_8);

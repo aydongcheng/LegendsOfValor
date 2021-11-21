@@ -5,14 +5,14 @@ import java.io.File;
 
 // A class that provides utility functions.
 public class Utils {
-    static Scanner scan = new Scanner(System.in);
+     private static Scanner scan = new Scanner(System.in);
 
     public Utils() {}
 
     // Foolproof integer input
     public static int safeIntInput(String message, int min, int max) {
         int int_tmp;
-        
+
         while (true) {
             Window.newMessage(message);
             Window.show();
@@ -29,7 +29,7 @@ public class Utils {
               } catch(NumberFormatException e) {
                 Window.newMessage("Not an integer!");
                 Window.show();
-            } 
+            }
         }
         return int_tmp;
     }
@@ -54,7 +54,7 @@ public class Utils {
               } catch(NumberFormatException e) {
                 Window.newMessage("Not a number!");
                 Window.show();
-            } 
+            }
         }
         return double_tmp;
     }
@@ -83,7 +83,7 @@ public class Utils {
             Window.newMessage("Illegal input!");
             Window.show();
         }
-    }    
+    }
 
     // Wait for x seconds with an animation
     public static void beautifulWait(double seconds, int width) {
@@ -103,8 +103,8 @@ public class Utils {
 
 	public static void playSound(String soundFile) {
 		try {
-			File f = new File("./" + soundFile);
-			AudioInputStream audioIn = AudioSystem.getAudioInputStream(f.toURI().toURL());  
+			File f = new File(System.getProperty("user.dir") + "/ConfigFiles/" + soundFile);
+			AudioInputStream audioIn = AudioSystem.getAudioInputStream(f.toURI().toURL());
 			Clip clip = AudioSystem.getClip();
 			clip.open(audioIn);
 			clip.start();

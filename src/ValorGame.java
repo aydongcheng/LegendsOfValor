@@ -21,7 +21,7 @@ public class ValorGame extends RPGGame{
 
     public void start(){
         // Play BGM
-        Utils.playSound("./BabyElephantWalk300.wav");
+        Utils.playSound("BabyElephantWalk300.wav");
 
         // ----- //
         // Welcome
@@ -138,7 +138,7 @@ public class ValorGame extends RPGGame{
                         m.move(rowCurrent, colNext-1);
                         lvBoard.cells[rowCurrent][colNext-1].arrive(m, id, false);
                     }
-                    
+
             	}
             }
             for(Hero h : hTeam.getHeroes()){
@@ -146,17 +146,8 @@ public class ValorGame extends RPGGame{
                     h.recover();
                 }
                 else {
-                	//if faint, keep this hero out of game for 1 round
-                	//if(h.faintTime==1) {
-                	//	h.faintTime--;
-                	//}
-                	//else {
-                        //h.move(7, h.getColumn());
-                        //lvBoard.cells[7][h.getColumn()]
-                        //        .arrive(h, hTeam.getHeroes().indexOf(h), true);
 	        		h.revive();
 	                h.setFaint(false);
-                	//}
                 }
             }
         	Window.newMessage("End of round " + roundCounter + "!\n^*^*^*^*^*^*^*^*^*^*^*^*^*^\n");
@@ -286,8 +277,8 @@ public class ValorGame extends RPGGame{
                     Monster targetTmpAttack = chooseMonster(targetListAttack);
 
                     // perform attack
-                    targetTmpAttack.getHurt(h.attack());
-                    Window.newMessage(h.getName()+" dealt "+h.attack()+" damages to "+targetTmpAttack.getName());
+                    int actualDamage = targetTmpAttack.getHurt(h.attack());
+                    Window.newMessage(h.getName()+" dealt "+actualDamage+" damages to "+targetTmpAttack.getName());
 
                     if(targetTmpAttack.isFaint()){
                         lvBoard.cells[targetTmpAttack.getRow()][targetTmpAttack.getColumn()]
@@ -633,7 +624,8 @@ public class ValorGame extends RPGGame{
     }
 
 
-    private void quitGame() {
+    @Override
+    protected void quitGame() {
         Window exitWindow = new ExitWindow();
         System.out.print(exitWindow);
         System.exit(0);
